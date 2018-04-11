@@ -138,7 +138,7 @@ def train(modelParams, epochNumber):
         print('Training     started')
         durationSum = 0
         durationSumAll = 0
-        for step in xrange(epochNumber, modelParams['maxSteps']):
+        for step in xrange(0, 1000):
             startTime = time.time()
             npfilename, npTargetP, npTargetT = sess.run([filename, targetP, targetT])
             duration = time.time() - startTime
