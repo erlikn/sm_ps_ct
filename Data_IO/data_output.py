@@ -23,12 +23,7 @@ def output(filename, npFilename, npTargetP, npTargetT, **kwargs):
     """
     dictOut = {}
     for i in range(kwargs.get('activeBatchSize')):
-        print(filename)
-        print(npFilename[i])
-        print(npTargetP[i])
-        print(npTargetT[i])
-        print()
-        dictOut[str(npFilename[i])] = {'targetP': npTargetP[i], 'targetT': npTargetT[i]}
+        dictOut[str(npFilename[i])] = {'targetP': npTargetP[i].tolist(), 'targetT': npTargetT[i].tolist()}
     _write_json_file(kwargs.get('outputDir')+filename+'.json', dictOut)
     return
 
