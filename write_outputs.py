@@ -214,7 +214,7 @@ def main(argv=None):  # pylint: disable=unused-argumDt
     print('')
     print('')
 
-    train(modelParams)
+    train(modelParams, epochNumber)
 
 
 if __name__ == '__main__':
