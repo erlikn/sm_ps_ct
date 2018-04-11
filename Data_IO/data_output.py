@@ -18,17 +18,17 @@ import tensorflow as tf
 from joblib import Parallel, delayed
 import multiprocessing
 
-def output(filename, npfilename, npTargetP, npTargetT, **kwargs):
+def output(filename, npFilename, npTargetP, npTargetT, **kwargs):
     """
     """
     dictOut = {}
     for i in range(kwargs.get('activeBatchSize')):
         print(filename)
-        print(npfilenamep[i])
+        print(npFilename[i])
         print(npTargetP[i])
         print(npTargetT[i])
         print()
-        dictOut[npfilename[i]] = {'targetP': npTargetP[i], 'targetT': npTargetT[i]}
+        dictOut[str(npFilename[i])] = {'targetP': npTargetP[i], 'targetT': npTargetT[i]}
     _write_json_file(kwargs.get('outputDir')+filename, dictOut)
     return
 
