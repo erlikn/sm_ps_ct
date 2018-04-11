@@ -29,7 +29,7 @@ def output(filename, npFilename, npTargetP, npTargetT, **kwargs):
         print(npTargetT[i])
         print()
         dictOut[str(npFilename[i])] = {'targetP': npTargetP[i], 'targetT': npTargetT[i]}
-    _write_json_file(kwargs.get('outputDir')+filename, dictOut)
+    _write_json_file(kwargs.get('outputDir')+filename+'.json', dictOut)
     return
 
 def _write_json_file(filepath, datafile):
