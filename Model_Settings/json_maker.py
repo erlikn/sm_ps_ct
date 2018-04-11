@@ -116,7 +116,8 @@ def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
 
-        ### Auto Iteration Number
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
         data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
@@ -129,8 +130,6 @@ def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
 def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
         data['modelName'] = 'cnn_8l2f_inception'
-        data['numParallelModules'] = 5
-        data['imageDepthChannels'] = 5
         data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
         data['modelShape'] = [32, 32, 32, 32, 64, 64, 64, 64, 512]
         data['trainBatchSize'] = 8#8#16
@@ -145,7 +144,9 @@ def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
 
-        ### Auto Iteration Number
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+        
         data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
