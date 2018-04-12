@@ -36,6 +36,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 # import input & output modules 
 import Data_IO.data_input as data_input
+import Data_IO.data_output as data_output
 
 PHASE = 'test'
 
@@ -68,12 +69,15 @@ def _set_control_params(modelParams):
         modelParams['numExamples'] = modelParams['numTrainDatasetExamples']
         modelParams['dataDir'] = modelParams['trainDataDir']
         modelParams['logDir'] = modelParams['trainLogDir']
+        modelParams['outputDir'] = modelParams['trainOutputDir']
+
     if modelParams['phase'] == 'test':
         modelParams['activeBatchSize'] = modelParams['testBatchSize']
         modelParams['maxSteps'] = modelParams['testMaxSteps']
         modelParams['numExamples'] = modelParams['numTestDatasetExamples']
         modelParams['dataDir'] = modelParams['testDataDir']
         modelParams['logDir'] = modelParams['testLogDir']
+        modelParams['outputDir'] = modelParams['testOutputDir']
 
     return modelParams
 ####################################################

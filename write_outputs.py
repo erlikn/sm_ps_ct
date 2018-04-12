@@ -67,6 +67,7 @@ def _set_control_params(modelParams):
         modelParams['maxSteps'] = modelParams['trainMaxSteps']
         modelParams['numExamples'] = modelParams['numTrainDatasetExamples']
         modelParams['dataDir'] = modelParams['trainDataDir']
+        modelParams['logDir'] = modelParams['trainLogDir']
         modelParams['outputDir'] = modelParams['trainOutputDir']
         
     if modelParams['phase'] == 'test':
@@ -74,6 +75,7 @@ def _set_control_params(modelParams):
         modelParams['maxSteps'] = modelParams['testMaxSteps']
         modelParams['numExamples'] = modelParams['numTestDatasetExamples']
         modelParams['dataDir'] = modelParams['testDataDir']
+        modelParams['logDir'] = modelParams['testLogDir']
         modelParams['outputDir'] = modelParams['testOutputDir']
 
     return modelParams
