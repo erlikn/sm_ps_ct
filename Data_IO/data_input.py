@@ -179,10 +179,12 @@ def fetch_inputs(numPreprocessThreads=None, numReaders=1, **kwargs):
             # Parse a serialized Example proto to extract the image and metadata.
             filename, pngTemp, target = tfrecord_io.parse_example_proto(exampleSerialized, **kwargs)
             sampleData.append([filename, pngTemp, target])
-        
+            
         batchFilename, batchPngTemp, batchTarget = tf.train.batch_join(sampleData,
                                                                     batch_size=kwargs.get('activeBatchSize'),
                                                                     capacity=2*numPreprocessThreads*kwargs.get('activeBatchSize'))
+
+        batchPngTemp = tf.image.resize_images(batchPngTemp, tf.constant([240,320], dtype=tf.int32))
 
         batchPngTemp = tf.cast(batchPngTemp, tf.float32)
         # Display the training images in the visualizer.

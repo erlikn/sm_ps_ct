@@ -24,8 +24,8 @@ def _set_folders(folderPath):
 #testLogDirBase = '../Data/kitti/logs/tfdh_twin_py_logs/test_logs/'
 
 # CLASSIFICATION --- Twin Correlation Matching Common Parameters
-baseTrainDataDir = '../Data/raw_labeled/tfrecords/'
-baseTestDataDir = '../Data/raw_labeled/tfrecords/'
+baseTrainDataDir = '../Data/raw_labeled/train_tfrecs/'
+baseTestDataDir = '../Data/raw_labeled/test_tfrecs/'
 trainLogDirBase = '../Data/logs/clsf_logs/train_logs/'
 testLogDirBase = '../Data/logs/clsf_logs/test_logs/'
 
@@ -127,8 +127,9 @@ def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
-        data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
+        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
+        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/'
+
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
         _set_folders(data['trainOutputDir'])
@@ -157,8 +158,9 @@ def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
         
-        data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
-        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
+        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
+        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/' 
+
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
         _set_folders(data['trainOutputDir'])
@@ -181,6 +183,9 @@ def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['networkOutputSize'] = data['logicalOutputSize']
         data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
         
+        data['pngRows'] = 240
+        data['pngCols'] = 320
+
         ## runs
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
@@ -188,8 +193,9 @@ def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
-        data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
+        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
+        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/'
+
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
         _set_folders(data['trainOutputDir'])
@@ -211,6 +217,9 @@ def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['networkOutputSize'] = data['logicalOutputSize']
         data['lossFunction'] = "_params_classification_gaussian_softmaxCrossentropy_loss"
         
+        data['pngRows'] = 240
+        data['pngCols'] = 320
+        
         ## runs
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
@@ -218,8 +227,9 @@ def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
         
-        data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
-        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
+        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
+        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/' 
+
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
         _set_folders(data['trainOutputDir'])
