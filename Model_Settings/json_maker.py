@@ -91,6 +91,14 @@ def write(runName):
     elif runName == '180410_clsf_g_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
         dataLocal['classificationModel'] = True
         _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '180412_clsf_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
+        dataLocal['classificationModel'] = True
+        _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '180412_clsf_g_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
+        dataLocal['classificationModel'] = True
+        _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     else:
         print("--error: Model name not found!")
         return False
