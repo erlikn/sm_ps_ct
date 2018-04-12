@@ -159,6 +159,67 @@ def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['weightNorm'] = False
         write_json_file(runName+'.json', data)
 
+
+def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_8l2f'
+        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
+        data['trainBatchSize'] = 8#8#16
+        data['testBatchSize'] = 8#8#16
+        data['numTrainDatasetExamples'] = 17311
+        data['numTestDatasetExamples'] = 4327
+        data['logicalOutputSize'] = 6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
+        
+        ## runs
+        data['trainMaxSteps'] = 75000
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
+        data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_8l2f'
+        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
+        data['trainBatchSize'] = 8#8#16
+        data['testBatchSize'] = 8#8#16
+        data['numTrainDatasetExamples'] = 17311
+        data['numTestDatasetExamples'] = 4327
+        data['logicalOutputSize'] = 6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "_params_classification_gaussian_softmaxCrossentropy_loss"
+        
+        ## runs
+        data['trainMaxSteps'] = 75000
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+        
+        data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
+        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+    
 ####################################################################################
 ####################################################################################
 ####################################################################################
