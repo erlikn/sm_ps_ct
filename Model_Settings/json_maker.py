@@ -118,6 +118,8 @@ def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
 
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
+
+        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
         data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
@@ -148,6 +150,7 @@ def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['testLogDir'] = testLogDirBase + runName
         
         data['trainDataDir'] = '../Data/raw_labeled/tfrecords/'
+        data['testDataDir'] = '../Data/CBY/test_tfrecs/' ############ this should be updated
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
         _set_folders(data['trainOutputDir'])
