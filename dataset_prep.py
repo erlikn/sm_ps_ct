@@ -5,6 +5,7 @@ import json
 import PIL
 import cv2
 import numpy as np
+import time
 
 from joblib import Parallel, delayed
 import multiprocessing
@@ -73,20 +74,36 @@ def create_tfrecords(pngFolder, filenames, writeFolder):
 
     print("Starting datawrite")
     num_cores = multiprocessing.cpu_count() - 2
-    #for j in range(0, len(jsonData['frames'])):
-    #  write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j)
-    Parallel(n_jobs=num_cores)(delayed(write_tfrecord)(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j) for j in range(5443,len(jsonData['frames'])))
+    #startTime = time.time()
+    for j in range(0, len(filenames)):
+        write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j)
+    #Parallel(n_jobs=num_cores)(delayed(write_tfrecord)(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j) for j in range(0,len(filenames)))
+    print('Progress = 100 %')
     print('Done')
+    #print(time.time()-startTime)
 
     return
+
+def _set_folder(folderPath):
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
 
 def main(_): 
     print('Argument List:', str(sys.argv))
     filenames = os.listdir(sys.argv[1] + "/png")
     for file in filenames:
-        if not 'png' in file:
+        if 'png' not in file:
             filenames.remove(file)
-    create_tfrecords(sys.argv[1] + "/png", filenames, sys.argv[1]+"/tfrecords")
+    np.random.shuffle(filenames)
+    trainFilenames = filenames[int(0.2*len(filenames)):] # 80% training
+    testFilenames = filenames[0:int(0.2*len(filenames))] # 20% testing
+
+    print("Writing train records...")
+    _set_folder(sys.argv[1]+"/train_tfrecs")
+    create_tfrecords(sys.argv[1] + "/png", trainFilenames, sys.argv[1]+"/train_tfrecs")
+    print("Writing test records...")
+    _set_folder(sys.argv[1]+"/test_tfrecs")
+    create_tfrecords(sys.argv[1] + "/png", testFilenames, sys.argv[1]+"/test_tfrecs")
 
 
 if __name__ == '__main__':

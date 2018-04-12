@@ -42,8 +42,8 @@ reCompileJSON = True
 def write(runName):
     dataLocal = {
         # Data Parameters
-        'numTrainDatasetExamples' : 21638,
-        'numTestDatasetExamples' : 1000,
+        'numTrainDatasetExamples' : 17311,
+        'numTestDatasetExamples' : 4327,
         'trainDataDir' : baseTrainDataDir,
         'testDataDir' : baseTestDataDir,
         'trainLogDir' : trainLogDirBase+'',
@@ -106,8 +106,8 @@ def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['modelShape'] = [32, 32, 32, 32, 64, 64, 64, 64, 512]
         data['trainBatchSize'] = 8#8#16
         data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 21638
-        data['numTestDatasetExamples'] = 1000
+        data['numTrainDatasetExamples'] = 17311
+        data['numTestDatasetExamples'] = 4327
         data['logicalOutputSize'] = 6
         data['networkOutputSize'] = data['logicalOutputSize']
         data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
@@ -134,8 +134,8 @@ def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['modelShape'] = [32, 32, 32, 32, 64, 64, 64, 64, 512]
         data['trainBatchSize'] = 8#8#16
         data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 21638
-        data['numTestDatasetExamples'] = 1000
+        data['numTrainDatasetExamples'] = 17311
+        data['numTestDatasetExamples'] = 4327
         data['logicalOutputSize'] = 6
         data['networkOutputSize'] = data['logicalOutputSize']
         data['lossFunction'] = "_params_classification_gaussian_softmaxCrossentropy_loss"
