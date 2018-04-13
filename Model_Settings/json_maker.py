@@ -123,6 +123,7 @@ def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         ## runs
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
 
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
@@ -154,6 +155,7 @@ def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         ## runs
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
 
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
@@ -189,6 +191,7 @@ def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         ## runs
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
 
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
@@ -223,6 +226,7 @@ def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         ## runs
         data['trainMaxSteps'] = 75000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
 
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName

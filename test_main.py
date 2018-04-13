@@ -163,7 +163,7 @@ def train(modelParams, epochNumber):
         print('Testing      started')
         durationSum = 0
         durationSumAll = 0
-        for step in xrange(0, int(108/modelParams['activeBatchSize'])+1 ): #xrange(0, modelParams['maxSteps']):
+        for step in xrange(0, modelParams['maxSteps']):
             startTime = time.time()
             lossValue, npfilename, npTargetP, npTargetT = sess.run([loss, filename, targetP, targetT])
             duration = time.time() - startTime
