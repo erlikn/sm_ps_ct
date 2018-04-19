@@ -62,7 +62,7 @@ def parse_example_proto(exampleSerialized, **kwargs):
     """
         'temp_v': _float_nparray(pngData),
         'filename': _bytes_feature(str.encode(filenames[i])),
-        'label6d': _float_nparray( numPassLabel.tolist()),  
+        'label': _float_nparray( numPassLabel.tolist()),  
     """
     pngRows = 480
     pngCols = 640
@@ -70,14 +70,14 @@ def parse_example_proto(exampleSerialized, **kwargs):
     featureMap = {
         'temp_v': tf.FixedLenFeature([pngRows*pngCols], dtype=tf.float32),
         'filename': tf.FixedLenFeature([], dtype=tf.int64),
-        'label6d': tf.FixedLenFeature([labelSize], dtype=tf.float32)
+        'label': tf.FixedLenFeature([labelSize], dtype=tf.float32)
         }
     features = tf.parse_single_example(exampleSerialized, featureMap)
     filename = features['filename']
     pngTemp = _decode_float_image(features['temp_v'],
                                 pngRows,
                                 pngCols)
-    target = features['label6d']
+    target = features['label']
     return filename, pngTemp, target
 
 def write_tfrecords(pngData, filename, numPassLabel, writeFolder):
@@ -86,7 +86,7 @@ def write_tfrecords(pngData, filename, numPassLabel, writeFolder):
     tf_example = tf.train.Example(features=tf.train.Features(feature={
         'temp_v': _float_nparray(pngData),
         'filename': _int64_feature(filename),
-        'label6d': _float_nparray(numPassLabel)
+        'label': _float_nparray(numPassLabel)
         }))
     writer.write(tf_example.SerializeToString())
     writer.close()

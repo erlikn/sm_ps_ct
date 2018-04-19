@@ -44,20 +44,12 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
     for j in range(0,len(jsonData['frames'][jidx]['annotations'])):
         if(jsonData['frames'][jidx]['annotations'][j]['label'] == 'Head'):
             numPassengers += 1
-    if numPassengers==0:
-        numPassLabel = np.array([1, 0, 0, 0, 0, 0], dtype=np.float32)
-    elif numPassengers==1:
-        numPassLabel = np.array([0, 1, 0, 0, 0, 0], dtype=np.float32)
-    elif numPassengers==2:
-        numPassLabel = np.array([0, 0, 1, 0, 0, 0], dtype=np.float32)
-    elif numPassengers==3:
-        numPassLabel = np.array([0, 0, 0, 1, 0, 0], dtype=np.float32)
-    elif numPassengers==4:
-        numPassLabel = np.array([0, 0, 0, 0, 1, 0], dtype=np.float32)
-    elif numPassengers==5:
-        numPassLabel = np.array([0, 0, 0, 0, 0, 1], dtype=np.float32)
+    if numPassengers < 2:
+        numPassLabel = np.array([1, 0], dtype=np.float32)
     else:
-      print('Error.... more than 5 passengers!!! -->', numPassengers)
+        numPassLabel = np.array([0, 1], dtype=np.float32)
+    #else:
+    #  print('Error.... more than 5 passengers!!! -->', numPassengers)
 
     tfrecord_io.write_tfrecords(pngData.tolist(), 100000+i, numPassLabel.tolist(), writeFolder)
     if ((10*i)%len(filenames) < 1):
@@ -98,11 +90,11 @@ def main(_):
     testFilenames = _read_json_file(sys.argv[1]+'/filenames_test.json')
 
     print("Writing train records...")
-    _set_folder(sys.argv[1]+"/train_tfrecs")
-    create_tfrecords(sys.argv[1] + "/trainpng", trainFilenames, sys.argv[1]+"/train_tfrecs")
+    _set_folder(sys.argv[1]+"/train_tfrecs_b_2")
+    create_tfrecords(sys.argv[1] + "/trainpng", trainFilenames, sys.argv[1]+"/train_tfrecs_b_2")
     print("Writing test records...")
-    _set_folder(sys.argv[1]+"/test_tfrecs")
-    create_tfrecords(sys.argv[1] + "/testpng", testFilenames, sys.argv[1]+"/test_tfrecs")
+    _set_folder(sys.argv[1]+"/test_tfrecs_b_2")
+    create_tfrecords(sys.argv[1] + "/testpng", testFilenames, sys.argv[1]+"/test_tfrecs_b_2")
 
 
 if __name__ == '__main__':

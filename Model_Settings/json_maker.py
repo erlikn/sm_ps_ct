@@ -84,21 +84,18 @@ def write(runName):
     reCompile = True
     NOreCompile = False
 
-    if runName == '180410_clsf_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
-        dataLocal['classificationModel'] = True
-        _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180410_clsf_g_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
-        dataLocal['classificationModel'] = True
-        _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180412_clsf_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
+    if runName == '180412_clsf_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
         dataLocal['classificationModel'] = True
         _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     ####
     elif runName == '180412_clsf_g_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
         dataLocal['classificationModel'] = True
         _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '180418_clsf_smce': # binary classification  >=2 or not
+        dataLocal['classificationModel'] = True
+        _180418_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
     else:
         print("--error: Model name not found!")
         return False
@@ -106,71 +103,6 @@ def write(runName):
     ##############
     ##############
     ##############
-
-def _180410_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_8l2f_inception'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        data['modelShape'] = [32, 32, 32, 32, 64, 64, 64, 64, 512]
-        data['trainBatchSize'] = 8#8#16
-        data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 17311
-        data['numTestDatasetExamples'] = 4327
-        data['logicalOutputSize'] = 6
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-        
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/'
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
-def _180410_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_8l2f_inception'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        data['modelShape'] = [32, 32, 32, 32, 64, 64, 64, 64, 512]
-        data['trainBatchSize'] = 8#8#16
-        data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 17311
-        data['numTestDatasetExamples'] = 4327
-        data['logicalOutputSize'] = 6
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_gaussian_softmaxCrossentropy_loss"
-        
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-        
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/' 
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
 
 def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
@@ -241,7 +173,42 @@ def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['batchNorm'] = True
         data['weightNorm'] = False
         write_json_file(runName+'.json', data)
-    
+
+def _180418_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_8l2f'
+        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
+        data['trainBatchSize'] = 8#8#16
+        data['testBatchSize'] = 8#8#16
+        data['numTrainDatasetExamples'] = 17311
+        data['numTestDatasetExamples'] = 4327
+        data['logicalOutputSize'] = 2
+        data['outputSize']=2
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
+        
+        data['pngRows'] = 240
+        data['pngCols'] = 320
+
+        ## runs
+        data['trainMaxSteps'] = 75000
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs_b_2/'
+        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs_b_2/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
 ####################################################################################
 ####################################################################################
 ####################################################################################
