@@ -66,7 +66,7 @@ def parse_example_proto(exampleSerialized, **kwargs):
     """
     pngRows = 480
     pngCols = 640
-    labelSize = 6
+    labelSize = kwargs.get('logicalOutputSize')
     featureMap = {
         'temp_v': tf.FixedLenFeature([pngRows*pngCols], dtype=tf.float32),
         'filename': tf.FixedLenFeature([], dtype=tf.int64),

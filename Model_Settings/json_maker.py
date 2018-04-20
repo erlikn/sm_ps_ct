@@ -111,8 +111,8 @@ def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
         data['trainBatchSize'] = 8#8#16
         data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 17311
-        data['numTestDatasetExamples'] = 4327
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
         data['logicalOutputSize'] = 6
         data['networkOutputSize'] = data['logicalOutputSize']
         data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
@@ -146,8 +146,8 @@ def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dat
         data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
         data['trainBatchSize'] = 8#8#16
         data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 17311
-        data['numTestDatasetExamples'] = 4327
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
         data['logicalOutputSize'] = 6
         data['networkOutputSize'] = data['logicalOutputSize']
         data['lossFunction'] = "_params_classification_gaussian_softmaxCrossentropy_loss"
@@ -181,8 +181,8 @@ def _180418_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
         data['trainBatchSize'] = 8#8#16
         data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 17311
-        data['numTestDatasetExamples'] = 4327
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
         data['logicalOutputSize'] = 2
         data['outputSize']=2
         data['networkOutputSize'] = data['logicalOutputSize']
