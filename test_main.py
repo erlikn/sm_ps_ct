@@ -171,7 +171,8 @@ def train(modelParams, epochNumber):
             assert not np.isnan(lossValue), 'Model diverged with loss = NaN'
 
             data_output.output(str(10000+step), npfilename, npTargetP, npTargetT, **modelParams)
-
+            
+            print(step, modelParams['maxSteps'], modelParams['phase'])
             if step % FLAGS.printOutStep == 0:
                 numExamplesPerStep = modelParams['activeBatchSize']
                 examplesPerSec = numExamplesPerStep / duration

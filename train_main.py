@@ -29,7 +29,7 @@ import tensorflow as tf
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 #from tensorflow.python.client import device_lib
 #print(device_lib.list_local_devices())
@@ -108,6 +108,7 @@ def train(modelParams, epochNumber):
         # Build a Graph that computes the HAB predictions from the
         # inference model
         targetP = model_cnn.inference(pngTemp, **modelParams)
+        print(targetP.get_shape())
         # loss model
         if modelParams.get('classificationModel'):
             print('Classification model...')
@@ -152,6 +153,7 @@ def train(modelParams, epochNumber):
         if epochNumber > 0:
             print('Loading Ex-Model with epoch number %d ...', epochNumber)
             saver.restore(sess, (modelParams['trainLogDir']+'/model.ckpt-'+str(epochNumber)))
+            #saver.restore(sess, (modelParams['trainLogDir']+'_30k/model.ckpt-29000'))
             print('Ex-Model     loaded')
 
         # Start the queue runners.

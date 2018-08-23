@@ -82,6 +82,39 @@ def validate_for_nan(tensorT):
     validity = tf.select(tf.is_nan(tensorMean), 0, 1) * tf.select(tf.is_inf(tensorMean), 0, 1)
     return validity
 
+def image_preprocessing(image, **kwargs):
+    """Decode and preprocess one image for evaluation or training.
+    Args:
+      imageBuffer: 3D tf.float32 Tensor (height, width, channels)
+    Returns:
+      3-D float Tensor containing an appropriately scaled image
+    """
+    ############################ if each dim has a different range then mean it per dim
+    meanChannels, stdChannels = tf.nn.moments(image, axes=[1, 2]) # b*r*c*d => d times meanChannels
+    # SUBTRACT MEAN
+    meanChannels = tf.reshape(meanChannels, [kwargs.get('activeBatchSize'), 1,1,-1]) # prepare for channel based subtraction
+    imagenorm = tf.subtract(image, meanChannels)
+    # DIVIDE BY STANDARD DEVIATION
+    stdChannels = tf.reshape(stdChannels, [kwargs.get('activeBatchSize'), 1,1,-1]) # prepare for channel based scalar division
+    stdChannels = tf.cond(tf.reduce_all(tf.not_equal(stdChannels,tf.zeros_like(stdChannels))),
+                          lambda: stdChannels,
+                          lambda: tf.ones_like(stdChannels))
+    imagenorm = tf.div(imagenorm, stdChannels)
+    # No need to scale to [-1,1] -> it is 0 mean and small values. That is ala we need.
+    # SCALE TO [-1,1]
+    #maxChannels = tf.reduce_max(imagenorm, [0,1])
+    #minChannels = tf.reduce_min(imagenorm, [0,1])
+    #maxminDif = tf.subtract(maxChannels, minChannels)
+    #maxminSum = tf.add(maxChannels, minChannels)
+    #maxminDif = tf.reshape(maxminDif, [1,1,-1])
+    #maxminSum = tf.reshape(maxminSum, [1,1,-1])
+    #coef = tf.constant(2.0, shape=[1,1,2])
+    #maxminDif = tf.cond(tf.reduce_all(tf.not_equal(maxminDif,tf.zeros_like(maxminDif))),
+    #                                  lambda: maxminDif, 
+    #                                  lambda: tf.ones_like(maxminDif))
+    #imagenorm = tf.div(tf.subtract(tf.multiply(coef,imagenorm), maxminSum), maxminDif) # ((2*x)-(max+min))/(max-min)
+    return imagenorm
+
 def fetch_inputs(numPreprocessThreads=None, numReaders=1, **kwargs):
     """Construct input for DeepHomography using the Reader ops.
     Args:
@@ -184,13 +217,15 @@ def fetch_inputs(numPreprocessThreads=None, numReaders=1, **kwargs):
                                                                     batch_size=kwargs.get('activeBatchSize'),
                                                                     capacity=2*numPreprocessThreads*kwargs.get('activeBatchSize'))
 
-        batchPngTemp = tf.image.resize_images(batchPngTemp, tf.constant([240,320], dtype=tf.int32))
+        # Resize to the desired size
+        batchPngTemp = tf.image.resize_images(batchPngTemp, tf.constant([kwargs.get('pngRows'),kwargs.get('pngCols')], dtype=tf.int32))
 
         batchPngTemp = tf.cast(batchPngTemp, tf.float32)
         # Display the training images in the visualizer.
         for i in range(kwargs.get('pngChannels')):
-            tf.summary.image('tempImg_'+str(i)+'_', batchPngTemp)
+            tf.summary.image('tempImg_'+str(i)+'_', tf.split(batchPngTemp, 2, 3)[0])
         
+        #batchPngTemp = image_preprocessing(batchPngTemp, **kwargs)
         return batchFilename, batchPngTemp, batchTarget
 
 def inputs(**kwargs):

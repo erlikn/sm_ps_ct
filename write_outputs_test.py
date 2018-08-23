@@ -29,7 +29,7 @@ import tensorflow as tf
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 #from tensorflow.python.client import device_lib
 #print(device_lib.list_local_devices())
@@ -138,7 +138,7 @@ def train(modelParams, epochNumber):
         print('Training     started')
         durationSum = 0
         durationSumAll = 0
-        for step in xrange(0, 1000):
+        for step in xrange(0, modelParams['maxSteps']):#(0, 1000):
             startTime = time.time()
             npfilename, npTargetP, npTargetT = sess.run([filename, targetP, targetT])
             duration = time.time() - startTime
