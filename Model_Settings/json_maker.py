@@ -317,12 +317,16 @@ def _180814c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['trainMaxSteps'] = 45000
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
         data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
 
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2/'
-        data['testDataDir'] = '../Data/cold_wb/test_tfrecs/'
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
+        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
 
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'

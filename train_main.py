@@ -104,16 +104,19 @@ def train(modelParams, epochNumber):
         # Get images inputs for model_cnn.
         filename, pngTemp, targetT = data_input.inputs(**modelParams)
         print('Input        ready')
+        filenamevali, pngTempvali, targetTvali = data_input.inputs('vali', **modelParams)
 
         # Build a Graph that computes the HAB predictions from the
         # inference model
         targetP = model_cnn.inference(pngTemp, **modelParams)
+        targetPvali = model_cnn.inference(pngTempvali, **modelParams)
         print(targetP.get_shape())
         # loss model
         if modelParams.get('classificationModel'):
             print('Classification model...')
             # loss on last tuple
             loss = model_cnn.loss(targetP, targetT, **modelParams)
+            lossvali = model_cnn.loss(targetPvali, targetTvali, **modelParams)
         else:
             print('Regression model...')
             # loss on last tuple
@@ -161,10 +164,13 @@ def train(modelParams, epochNumber):
         print('QueueRunner  started')
 
         summaryWriter = tf.summary.FileWriter(modelParams['logDir'], sess.graph)
+        summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_validation', sess.graph)
         
         print('Training     started')
         durationSum = 0
         durationSumAll = 0
+        prevLoss = 99999
+        prevStep = int(modelParams['maxSteps']/2)
         for step in xrange(epochNumber, modelParams['maxSteps']):
             startTime = time.time()
             _, lossValue = sess.run([opTrain, loss])
@@ -200,6 +206,14 @@ def train(modelParams, epochNumber):
                             datetime.now()
                         )
                     )
+            if lossValue < prevLoss and step-prevStep > 100:
+                print('Validation Function in progress...')
+                lossvalidationsum = 0
+                for i in range(0, modelParams['valiSteps']):
+                    lossvalidationsum += sess.run([lossvali])
+                print('     Average loss = ', lossvalidationsum/modelParams['valiSteps'])
+                summaryStr = sess.run(summaryOp)
+                summaryValiWriter.add_summary(summaryStr, step)
 
 def _setupLogging(logPath):
     # cleanup

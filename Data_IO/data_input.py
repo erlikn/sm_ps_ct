@@ -115,7 +115,7 @@ def image_preprocessing(image, **kwargs):
     #imagenorm = tf.div(tf.subtract(tf.multiply(coef,imagenorm), maxminSum), maxminDif) # ((2*x)-(max+min))/(max-min)
     return imagenorm
 
-def fetch_inputs(numPreprocessThreads=None, numReaders=1, **kwargs):
+def fetch_inputs(dataDir, numPreprocessThreads=None, numReaders=1, **kwargs):
     """Construct input for DeepHomography using the Reader ops.
     Args:
       dataDir: Path to the DeepHomography data directory.
@@ -126,10 +126,7 @@ def fetch_inputs(numPreprocessThreads=None, numReaders=1, **kwargs):
       pclA: Point Clouds. 3D tensor of [batch_size, pclRows, pclCols]
       pclB: Point Clouds. 3D tensor of [batch_size, pclRows, pclCols]
       tfRecfileID: 3 ints [seqID, frame i, frame i+1]
-    """
-    if not kwargs.get('dataDir'):
-        raise ValueError('Please supply a dataDir')
-    dataDir = kwargs.get('dataDir')
+    """    
     with tf.name_scope('batch_processing'):
         # get dataset filenames
         filenames = glob.glob(os.path.join(dataDir, "*.tfrecords"))
@@ -228,21 +225,25 @@ def fetch_inputs(numPreprocessThreads=None, numReaders=1, **kwargs):
         #batchPngTemp = image_preprocessing(batchPngTemp, **kwargs)
         return batchFilename, batchPngTemp, batchTarget
 
-def inputs(**kwargs):
+def inputs(mode='train or test', **kwargs):
     """Construct input for DeepHomography_CNN evaluation using the Reader ops.
     
     Args:
 
     Returns:
       batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
-      batchHAB: 2D tensor of [batch_size, 12] size.
-      batchPCL: 2x 2D tensor of [batch_size, pclCols] size.
-      tfrec: 3x int
     Raises:
       ValueError: If no dataDir
     """
+    dataDir = kwargs.get('dataDir')
+    if mode == 'vali':
+        dataDir = kwargs.get('valiDataDir')
+    
+    if not dataDir:
+        raise ValueError('Please supply a dataDir')
+
     with tf.device('/cpu:0'):
-        batchFilename, batchPngTemp, batchTarget = fetch_inputs(**kwargs)
+        batchFilename, batchPngTemp, batchTarget = fetch_inputs(dataDir, **kwargs)
         
         if kwargs.get('usefp16'):
             batchPngTemp = tf.cast(batchPngTemp, tf.float16)
