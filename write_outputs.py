@@ -128,7 +128,7 @@ def train(modelParams, epochNumber):
         saver = tf.train.Saver(tf.global_variables())
         # restore a saver.
         print('Loading Ex-Model with epoch number %d ...', epochNumber)
-        saver.restore(sess, (modelParams['trainLogDir']+'/model.ckpt-'+str(epochNumber)))
+        saver.restore(sess, (modelParams['trainLogDir']+'_validation/model.ckpt-'+str(epochNumber)))
         print('Ex-Model     loaded')
 
         # Start the queue runners.

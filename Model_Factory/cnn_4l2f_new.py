@@ -72,6 +72,23 @@ def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13
     pool = tf.nn.max_pool(fireOut, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                           padding='SAME', name='maxpool1')
 
+    ############# CONV3 3x3 conv, 2 input dims, 2 parallel modules, 64 output dims (filters)
+    fireOut, prevExpandDim = model_base.conv_fire_module('conv3', fireOut, prevExpandDim,
+                                                                  {'cnn3x3': modelShape[2]},
+                                                                  wd, **kwargs)
+    # calc batch norm CONV3
+    if kwargs.get('batchNorm'):
+        fireOut = model_base.batch_norm('batchnorm3', fireOut, dtype)
+    ############# CONV2
+    fireOut, prevExpandDim = model_base.conv_fire_module('conv4', fireOut, prevExpandDim,
+                                                                  {'cnn3x3': modelShape[3]},
+                                                                  wd, **kwargs)
+    # calc batch norm CONV2
+    if kwargs.get('batchNorm'):
+        fireOut = model_base.batch_norm('batchnorm4', fireOut, dtype)
+    ###### Pooling1 2x2 wit stride 2
+    pool = tf.nn.max_pool(fireOut, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                          padding='SAME', name='maxpool2')
     ###### DROPOUT after CONV8
     with tf.name_scope("drop"):
         keepProb = tf.constant(kwargs.get('dropOutKeepRate') if kwargs.get('phase') == 'train' else 1.0, dtype=dtype)

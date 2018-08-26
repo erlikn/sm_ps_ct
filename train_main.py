@@ -104,7 +104,7 @@ def train(modelParams, epochNumber):
         # Get images inputs for model_cnn.
         filename, pngTemp, targetT = data_input.inputs(**modelParams)
         print('Input        ready')
-        filenamevali, pngTempvali, targetTvali = data_input.inputs('vali', **modelParams)
+        filenamevali, pngTempvali, targetTvali = data_input.inputs_vali(**modelParams)
 
         # Build a Graph that computes the HAB predictions from the
         # inference model
@@ -170,6 +170,7 @@ def train(modelParams, epochNumber):
         durationSum = 0
         durationSumAll = 0
         prevLoss = 99999
+        prevValiSumLoss = 99999
         prevStep = int(modelParams['maxSteps']/2)
         for step in xrange(epochNumber, modelParams['maxSteps']):
             startTime = time.time()
@@ -206,12 +207,19 @@ def train(modelParams, epochNumber):
                             datetime.now()
                         )
                     )
-            if lossValue < prevLoss and step-prevStep > 100:
-                print('Validation Function in progress...')
+            if lossValue < prevLoss and  step > prevStep and step % 1000 == 0:
+                prevLoss = lossValue
+                prevStep = step
+                print('Validation Function in progress... step ', step)
                 lossvalidationsum = 0
                 for i in range(0, modelParams['valiSteps']):
-                    lossvalidationsum += sess.run([lossvali])
+                    lossvalidationsum += np.mean(np.array(sess.run([lossvali])))
                 print('     Average loss = ', lossvalidationsum/modelParams['valiSteps'])
+                if lossvalidationsum < prevValiSumLoss:
+                    import shutil
+                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.data-00000-of-00001' )
+                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.index' )
+                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.meta' )
                 summaryStr = sess.run(summaryOp)
                 summaryValiWriter.add_summary(summaryStr, step)
 

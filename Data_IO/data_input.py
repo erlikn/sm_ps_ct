@@ -115,7 +115,7 @@ def image_preprocessing(image, **kwargs):
     #imagenorm = tf.div(tf.subtract(tf.multiply(coef,imagenorm), maxminSum), maxminDif) # ((2*x)-(max+min))/(max-min)
     return imagenorm
 
-def fetch_inputs(dataDir, numPreprocessThreads=None, numReaders=1, **kwargs):
+def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
     """Construct input for DeepHomography using the Reader ops.
     Args:
       dataDir: Path to the DeepHomography data directory.
@@ -129,8 +129,8 @@ def fetch_inputs(dataDir, numPreprocessThreads=None, numReaders=1, **kwargs):
     """    
     with tf.name_scope('batch_processing'):
         # get dataset filenames
-        filenames = glob.glob(os.path.join(dataDir, "*.tfrecords"))
-        print(dataDir)
+        filenames = glob.glob(os.path.join(readDir, "*.tfrecords"))
+        print(readDir)
         # read parameters
         ph = kwargs.get('phase')
         if filenames is None or len(filenames) == 0:
@@ -225,7 +225,7 @@ def fetch_inputs(dataDir, numPreprocessThreads=None, numReaders=1, **kwargs):
         #batchPngTemp = image_preprocessing(batchPngTemp, **kwargs)
         return batchFilename, batchPngTemp, batchTarget
 
-def inputs(mode='train or test', **kwargs):
+def inputs(**kwargs):
     """Construct input for DeepHomography_CNN evaluation using the Reader ops.
     
     Args:
@@ -235,15 +235,35 @@ def inputs(mode='train or test', **kwargs):
     Raises:
       ValueError: If no dataDir
     """
-    dataDir = kwargs.get('dataDir')
-    if mode == 'vali':
-        dataDir = kwargs.get('valiDataDir')
-    
-    if not dataDir:
+    readDir = kwargs.get('dataDir')
+    if not readDir:
         raise ValueError('Please supply a dataDir')
 
     with tf.device('/cpu:0'):
-        batchFilename, batchPngTemp, batchTarget = fetch_inputs(dataDir, **kwargs)
+        batchFilename, batchPngTemp, batchTarget = fetch_inputs(readDir, **kwargs)
+        
+        if kwargs.get('usefp16'):
+            batchPngTemp = tf.cast(batchPngTemp, tf.float16)
+            batchTarget = tf.cast(batchTarget, tf.float16)
+
+    return batchFilename, batchPngTemp, batchTarget
+
+def inputs_vali(**kwargs):
+    """Construct input for DeepHomography_CNN evaluation using the Reader ops.
+    
+    Args:
+
+    Returns:
+      batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
+    Raises:
+      ValueError: If no dataDir
+    """
+    readDir = kwargs.get('valiDataDir')
+    if not readDir:
+        raise ValueError('Please supply a dataDir')
+
+    with tf.device('/cpu:0'):
+        batchFilename, batchPngTemp, batchTarget = fetch_inputs(readDir, **kwargs)
         
         if kwargs.get('usefp16'):
             batchPngTemp = tf.cast(batchPngTemp, tf.float16)

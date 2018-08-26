@@ -666,7 +666,7 @@ def fc_regression_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **
     existingParams = kwargs.get('existingParams')
 
     with tf.variable_scope(name):
-        with tf.variable_scope('fc') as scope:
+        with tf.variable_scope('fc', reuse=tf.AUTO_REUSE) as scope:
             stddev = np.sqrt(2/np.prod(prevLayerOut.get_shape().as_list()[1:]))
             fcWeights = _variable_with_weight_decay('weights',
                                                     shape=[prevLayerDim, fireDims['fc']],

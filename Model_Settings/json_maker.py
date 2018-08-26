@@ -299,9 +299,9 @@ def _180814c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['modelName'] = 'cnn_4l2f_new'
         data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
         #data['modelShape'] = [48, 96, 96, 128, 512]
-        data['modelShape'] = [16, 32, 0, 0, 256]
-        data['trainBatchSize'] = 32#16
-        data['testBatchSize'] = 32#16
+        data['modelShape'] = [16, 32, 32, 64, 256]
+        data['trainBatchSize'] = 16#32#16
+        data['testBatchSize'] = 16#32#16
         data['numTrainDatasetExamples'] = 21020
         data['numTestDatasetExamples'] = 131
         data['logicalOutputSize'] = 6
