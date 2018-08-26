@@ -105,11 +105,13 @@ def train(modelParams, epochNumber):
         filename, pngTemp, targetT = data_input.inputs(**modelParams)
         print('Input        ready')
         filenamevali, pngTempvali, targetTvali = data_input.inputs_vali(**modelParams)
+        filenametest, pngTemptest, targetTtest = data_input.inputs_test(**modelParams)
 
         # Build a Graph that computes the HAB predictions from the
         # inference model
         targetP = model_cnn.inference(pngTemp, **modelParams)
         targetPvali = model_cnn.inference(pngTempvali, **modelParams)
+        targetPtest = model_cnn.inference(pngTemptest, **modelParams)
         print(targetP.get_shape())
         # loss model
         if modelParams.get('classificationModel'):
@@ -117,6 +119,7 @@ def train(modelParams, epochNumber):
             # loss on last tuple
             loss = model_cnn.loss(targetP, targetT, **modelParams)
             lossvali = model_cnn.loss(targetPvali, targetTvali, **modelParams)
+            losstest = model_cnn.loss(targetPtest, targetTtest, **modelParams)
         else:
             print('Regression model...')
             # loss on last tuple
@@ -165,12 +168,14 @@ def train(modelParams, epochNumber):
 
         summaryWriter = tf.summary.FileWriter(modelParams['logDir'], sess.graph)
         summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_validation', sess.graph)
+        summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_test', sess.graph)
         
         print('Training     started')
         durationSum = 0
         durationSumAll = 0
         prevLoss = 99999
         prevValiSumLoss = 99999
+        prevTestSumLoss = 99999
         prevStep = int(modelParams['maxSteps']/2)
         for step in xrange(epochNumber, modelParams['maxSteps']):
             startTime = time.time()
@@ -207,19 +212,34 @@ def train(modelParams, epochNumber):
                             datetime.now()
                         )
                     )
-            if lossValue < prevLoss and  step > prevStep and step % 1000 == 0:
-                prevLoss = lossValue
-                prevStep = step
-                print('Validation Function in progress... step ', step)
-                lossvalidationsum = 0
-                for i in range(0, modelParams['valiSteps']):
-                    lossvalidationsum += np.mean(np.array(sess.run([lossvali])))
-                print('     Average loss = ', lossvalidationsum/modelParams['valiSteps'])
-                if lossvalidationsum < prevValiSumLoss:
+            #if lossValue < prevLoss and  step > prevStep and step % 1000 == 0:
+            #    prevLoss = lossValue
+            #    prevStep = step
+            #    print('Validation Function in progress... step ', step)
+            #    lossvalidationsum = 0
+            #    for i in range(0, modelParams['valiSteps']):
+            #        lossvalidationsum += np.mean(np.array(sess.run([lossvali])))
+            #    print('     Average loss = ', lossvalidationsum/modelParams['valiSteps'])
+            #    if lossvalidationsum < prevValiSumLoss:
+            #        import shutil
+            #        shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.data-00000-of-00001' )
+            #        shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.index' )
+            #        shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.meta' )
+            #    summaryStr = sess.run(summaryOp)
+            #    summaryValiWriter.add_summary(summaryStr, step)
+            
+            if step % 1000 == 0:
+                print('Test Function in progress... step ', step)
+                losstestsum = 0
+                for i in range(0, modelParams['testMaxSteps']):
+                    losstestsum += np.mean(np.array(sess.run([lossvali])))
+                print('     Average loss = ', losstestsum/modelParams['testMaxSteps'])
+                if losstestsum < prevTestSumLoss:
                     import shutil
-                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.data-00000-of-00001' )
-                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.index' )
-                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.meta' )
+                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_test/model.ckpt-'+str(step)+'.data-00000-of-00001' )
+                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_test/model.ckpt-'+str(step)+'.index' )
+                    shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_test/model.ckpt-'+str(step)+'.meta' )
+                    prevTestSumLoss = losstestsum
                 summaryStr = sess.run(summaryOp)
                 summaryValiWriter.add_summary(summaryStr, step)
 
