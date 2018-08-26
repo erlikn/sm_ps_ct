@@ -227,10 +227,10 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
 
 def inputs(**kwargs):
     """
-    Returns:
-      batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
-    Raises:
-      ValueError: If no dataDir
+        Returns:
+          batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
+        Raises:
+          ValueError: If no dataDir
     """
     readDir = kwargs.get('dataDir')
     if not readDir:
@@ -247,10 +247,10 @@ def inputs(**kwargs):
 
 def inputs_vali(**kwargs):
     """
-    Returns:
-      batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
-    Raises:
-      ValueError: If no dataDir
+        Returns:
+          batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
+        Raises:
+          ValueError: If no dataDir
     """
     readDir = kwargs.get('valiDataDir')
     if not readDir:
@@ -268,10 +268,10 @@ def inputs_vali(**kwargs):
 
     def inputs_test(**kwargs):
     """
-    Returns:
-      batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
-    Raises:
-      ValueError: If no dataDir
+        Returns:
+          batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
+        Raises:
+          ValueError: If no dataDir
     """
     readDir = kwargs.get('testDataDir')
     if not readDir:
