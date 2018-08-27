@@ -252,27 +252,7 @@ def inputs_vali(**kwargs):
         Raises:
           ValueError: If no dataDir
     """
-    readDir = kwargs.get('valiDataDir')
-    if not readDir:
-        raise ValueError('Please supply a dataDir')
-
-    with tf.device('/cpu:0'):
-        batchFilename, batchPngTemp, batchTarget = fetch_inputs(readDir, **kwargs)
-        
-        if kwargs.get('usefp16'):
-            batchPngTemp = tf.cast(batchPngTemp, tf.float16)
-            batchTarget = tf.cast(batchTarget, tf.float16)
-
-    return batchFilename, batchPngTemp, batchTarget
-
-
-    def inputs_test(**kwargs):
-    """
-        Returns:
-          batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
-        Raises:
-          ValueError: If no dataDir
-    """
+#TEST###    readDir = kwargs.get('valiDataDir')
     readDir = kwargs.get('testDataDir')
     if not readDir:
         raise ValueError('Please supply a dataDir')
@@ -285,3 +265,24 @@ def inputs_vali(**kwargs):
             batchTarget = tf.cast(batchTarget, tf.float16)
 
     return batchFilename, batchPngTemp, batchTarget
+
+
+#TEST###def inputs_test(**kwargs):
+#TEST###    """
+#TEST###        Returns:
+#TEST###          batchImage: Images. 4D tensor of [batch_size, 128, 512, 2] size.
+#TEST###        Raises:
+#TEST###          ValueError: If no dataDir
+#TEST###    """
+#TEST###    readDir = kwargs.get('testDataDir')
+#TEST###    if not readDir:
+#TEST###        raise ValueError('Please supply a dataDir')
+#TEST###
+#TEST###    with tf.device('/cpu:0'):
+#TEST###        batchFilename, batchPngTemp, batchTarget = fetch_inputs(readDir, **kwargs)
+#TEST###        
+#TEST###        if kwargs.get('usefp16'):
+#TEST###            batchPngTemp = tf.cast(batchPngTemp, tf.float16)
+#TEST###            batchTarget = tf.cast(batchTarget, tf.float16)
+#TEST###
+#TEST###    return batchFilename, batchPngTemp, batchTarget

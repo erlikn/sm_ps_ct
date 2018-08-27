@@ -300,8 +300,8 @@ def _180814c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
         #data['modelShape'] = [48, 96, 96, 128, 512]
         data['modelShape'] = [16, 32, 32, 64, 256]
-        data['trainBatchSize'] = 16#32#16
-        data['testBatchSize'] = 16#32#16
+        data['trainBatchSize'] = 12#32#16
+        data['testBatchSize'] = 12#32#16
         data['numTrainDatasetExamples'] = 21020
         data['numTestDatasetExamples'] = 131
         data['logicalOutputSize'] = 6
