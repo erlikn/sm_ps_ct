@@ -17,7 +17,7 @@ def _read_json_file(filepath):
         return json.load(open(filepath))
 
 def evaluate(resDict):
-    print('resDict len = ', len(resDict))
+    #print('resDict len = ', len(resDict))
     dictKeys = resDict.keys()
     pos1 = 0
     neg1 = 0
@@ -30,9 +30,9 @@ def evaluate(resDict):
             pos1 += 1
         else:
             neg1 += 1
-    print("Binary 2 Accuracy top 1 = ", 100*pos1/(pos1+neg1))            
-    print(pos1+neg1)            
-    return
+    #print("Binary 2 Accuracy top 1 = ", 100*pos1/(pos1+neg1))            
+    #print(pos1+neg1)            
+    return 100*pos1/(pos1+neg1)
 
 def _get_resultDict(jsonPath):
     filenames = listdir(jsonPath)
@@ -48,7 +48,7 @@ def main(modelName, phase):
     if not json_maker.recompile_json_files(modelName):
         return
     jsonToRead = modelName+'.json'
-    print("Reading %s" % jsonToRead)
+    #print("Reading %s" % jsonToRead)
     with open('Model_Settings/'+jsonToRead) as dataFile:
         modelParams = json.load(dataFile)
     
@@ -61,8 +61,8 @@ def main(modelName, phase):
         return
     
     resultsDict = _get_resultDict(jsonPath)
-    evaluate(resultsDict)
-    return
+    acc = evaluate(resultsDict)
+    return acc
 
 if __name__ == '__main__':
     if (len(sys.argv)<3):

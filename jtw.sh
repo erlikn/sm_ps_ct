@@ -1,2 +1,9 @@
 #!/bin/sh
-python3 write_tfrecords.py 180329_ITR_B_4_clsf_lastTup 4
+((i=0))
+while :
+do
+	((k=i+18000))
+	echo $k
+	python3 evaluator.py 180916c2 $k
+	((i=i+1000))
+done

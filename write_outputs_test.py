@@ -29,7 +29,8 @@ import tensorflow as tf
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 #from tensorflow.python.client import device_lib
 #print(device_lib.list_local_devices())
@@ -58,7 +59,6 @@ tf.app.flags.DEFINE_integer('ProgressStepReportOutputWrite', 250,
 ####################################################
 ####################################################
 def _set_control_params(modelParams):
-    modelParams['phase'] = PHASE
     #params['shardMeta'] = model_cnn.getShardsMetaInfo(FLAGS.dataDir, params['phase'])
     modelParams['existingParams'] = None
 
@@ -110,7 +110,7 @@ def train(modelParams, epochNumber):
         targetP = model_cnn.inference(pngTemp, **modelParams)
             
         ##############################
-        print('Training     ready')
+        print('Inference    ready')
         # Build an initialization operation to run below.
         #init = tf.initialize_all_variables()
         init = tf.global_variables_initializer()
@@ -128,7 +128,10 @@ def train(modelParams, epochNumber):
         saver = tf.train.Saver(tf.global_variables())
         # restore a saver.
         print('Loading Ex-Model with epoch number %d ...', epochNumber)
-        saver.restore(sess, (modelParams['trainLogDir']+'_test/model.ckpt-'+str(epochNumber)))
+        print('     ', modelParams['trainLogDir']+'_validation/model.ckpt-'+str(epochNumber))
+        saver.restore(sess, (modelParams['trainLogDir']+'_validation/model.ckpt-'+str(epochNumber)))
+        #print('     ', modelParams['trainLogDir']+'/model.ckpt-'+str(epochNumber))
+        #saver.restore(sess, (modelParams['trainLogDir']+'/model.ckpt-'+str(epochNumber)))
         print('Ex-Model     loaded')
 
         # Start the queue runners.
@@ -138,14 +141,26 @@ def train(modelParams, epochNumber):
         print('Training     started')
         durationSum = 0
         durationSumAll = 0
+        import cv2
         for step in xrange(0, modelParams['maxSteps']):#(0, 1000):
             startTime = time.time()
+            #npfilename, npTargetP, npTargetT, npPng = sess.run([filename, targetP, targetT, pngTemp])
             npfilename, npTargetP, npTargetT = sess.run([filename, targetP, targetT])
             duration = time.time() - startTime
             durationSum += duration
-
-            data_output.output(str(10000+step), npfilename, npTargetP, npTargetT, **modelParams)
             
+            #print(npfilename)
+            #print(npTargetT)
+            #print(npTargetP)
+            
+            #p1 = npPng[0,:,:,0]
+            #p2 = npPng[0,:,:,1]
+            #p1 = (p1-np.min(p1)) / (np.max(p1)-np.min(p1))
+            #p2 = (p2-np.min(p2)) / (np.max(p2)-np.min(p2))
+            #cv2.imshow('img0', p1)
+            #cv2.imshow('img1', p2)
+            #cv2.waitKey(0)
+            data_output.output(str(10000+step), npfilename, npTargetP, npTargetT, **modelParams)
             # Print Progress Info
             if ((step % FLAGS.ProgressStepReportStep) == 0) or ((step+1) == modelParams['maxSteps']):
                 print('Progress: %.2f%%, Elapsed: %.2f mins, Training Completion in: %.2f mins --- %s' %
@@ -156,6 +171,15 @@ def train(modelParams, epochNumber):
                             datetime.now()
                         )
                     )
+            #if step == 128:
+            #    modelParams['phase'] = 'train'
+            #
+            #if step == 130:
+            #    modelParams['phase'] = 'test'
+        sess.close()
+    tf.reset_default_graph()
+
+
 
 def _setupLogging(logPath):
     # cleanup
@@ -193,6 +217,7 @@ def main(argv=None):  # pylint: disable=unused-argumDt
     with open('Model_Settings/'+jsonToRead) as data_file:
         modelParams = json.load(data_file)
 
+    modelParams['phase'] = PHASE
     modelParams = _set_control_params(modelParams)
 
     print(modelParams['modelName'])

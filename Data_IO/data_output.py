@@ -15,7 +15,6 @@ import numpy as np
 import csv
 import tensorflow as tf
 
-from joblib import Parallel, delayed
 import multiprocessing
 
 def output(filename, npFilename, npTargetP, npTargetT, **kwargs):

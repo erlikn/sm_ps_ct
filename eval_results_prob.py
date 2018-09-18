@@ -14,32 +14,30 @@ def _read_json_file(filepath):
     with open(filepath) as data_file:
         return json.load(open(filepath))
 
+
+def _get_prob_argmax(p):
+    p = p/np.sum(p)
+    l = np.array([0,1,2,3,4,5], dtype=np.float32)
+    pid = np.floor(10*np.sum(np.multiply(p, l))/l.shape[0])
+    return int(pid)
+
 def evaluate(resDict):
-    #print('resDict len = ', len(resDict))
+    print('resDict len = ', len(resDict))
     dictKeys = resDict.keys()
     pos1 = 0
-    pos2 = 0
     neg1 = 0
-    neg2 = 0
     for k in dictKeys:
         t = np.array(resDict[k]['targetT'])
         tidx = np.argmax(t)
         p = np.array(resDict[k]['targetP'])
-        pidx = np.argmax(p)
+        pidx = _get_prob_argmax(p)
         if tidx == pidx:
             pos1 += 1
-            pos2 += 1
         else:
             neg1 += 1
-            if np.argmax(np.delete(p, pidx)) == tidx:
-                pos2 += 1
-            else:
-                neg2 += 1
-    #print("Accuracy top 1 = ", 100*pos1/(pos1+neg1))            
-    #print("Accuracy top 2 = ", 100*pos2/(pos2+neg2))
-    #print(pos2+neg2)
-    #print(pos1+neg1)            
-    return 100*pos1/(pos1+neg1)
+    print("Accuracy top 1 = ", 100*pos1/(pos1+neg1))            
+    print(pos1+neg1)            
+    return
 
 def _get_resultDict(jsonPath):
     filenames = listdir(jsonPath)
@@ -67,10 +65,9 @@ def main(modelName, phase):
         print('Please enter proper phase')
         return
     
-    #print('Reading: ', jsonPath)
     resultsDict = _get_resultDict(jsonPath)
-    acc = evaluate(resultsDict)
-    return acc
+    evaluate(resultsDict)
+    return
 
 if __name__ == '__main__':
     if (len(sys.argv)<3):

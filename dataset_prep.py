@@ -7,7 +7,6 @@ import cv2
 import numpy as np
 import time
 
-from joblib import Parallel, delayed
 import multiprocessing
 
 import Data_IO.tfrecord_io as tfrecord_io
@@ -28,25 +27,13 @@ def _read_json_file(filename):
     return json.load(open(filename))
 
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):
-    #pngFile = Image.open(pngFolder+'/'+filenames[i])
-    #binFile = Image.open(pngFolder+'/../pngBinary/'+filenames[i])
-    #pngData = np.array(pngFile, dtype=np.float32)
-    #binData = np.array(binFile, dtype=np.float32)
-
     ######## No resizing - images are resized after parsing inside data_input.py
-    pngData = cv2.imread(pngFolder+'/'+filenames[i], -1)
-    binData = cv2.imread(pngFolder+'/../pngBinary/'+filenames[i], -1)
-    #print(pngFolder+'/'+filenames[i])
+    data = cv2.imread(pngFolder+'/'+filenames[i], -1)
 
-    #print(pngFolder+'/../pngBinary/'+filenames[i])
-    #cv2.imshow('png', pngData)
-    #cv2.imshow('bin', binData)
-    data = np.stack([pngData, binData])
-    data = np.swapaxes(np.swapaxes(data,0,1),1,2)
-#    print(data.shape)
-#    print(np.sum(np.sum(data, 0), 0))
-#    cv2.imshow('mix', data)
-#    cv2.waitKey(0)
+    #print(data.shape)
+    #print(np.sum(np.sum(data, 0), 0))
+    #cv2.imshow('mix', data)
+    #cv2.waitKey(0)
     
 
     # Label preparation
@@ -104,8 +91,8 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
 
 def create_tfrecords(pngFolder, filenames, writeFolder):
     # TODO(user): Populate the following variables from your example.
-    height = 480 # Image height
-    width = 640 # Image width
+    height = 256 # Image height
+    width = 352 # Image width
     encoded_image_data = None # Encoded image bytes
     image_format = 'png' # b'jpeg' or b'png``'
 
@@ -115,12 +102,10 @@ def create_tfrecords(pngFolder, filenames, writeFolder):
         jsonFileName.append(jsonData['frames'][i]['file'])
 
     print("Starting datawrite")
-    num_cores = multiprocessing.cpu_count() - 2
     #startTime = time.time()
     print('Progress = 0 %')
     for j in range(len(filenames)):
         write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j)
-    #Parallel(n_jobs=num_cores)(delayed(write_tfrecord)(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j) for j in range(0,len(filenames)))
     print('Progress = 100 %')
     print('Done')
     #print(time.time()-startTime)
@@ -136,19 +121,14 @@ def main(_):
     trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train.json')
     from random import shuffle
     shuffle(trainFilenames)
-    valiFilenames = trainFilenames[0:1024]
-    trainFilenames = trainFilenames[1024:-1]
     testFilenames = _read_json_file(sys.argv[1]+'/filenames_test.json')
 
     print("Writing train records...")
-    _set_folder(sys.argv[1]+"/train_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/trainpng", trainFilenames, sys.argv[1]+"/train_tfrecs_2c")
-    print("Writing validation records...")
-    _set_folder(sys.argv[1]+"/vali_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/trainpng", valiFilenames, sys.argv[1]+"/vali_tfrecs_2c")
+    _set_folder(sys.argv[1]+"/train_tfrecs_352")
+    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_352")
     print("Writing test records...")
-    _set_folder(sys.argv[1]+"/test_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/testpng", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
+    _set_folder(sys.argv[1]+"/test_tfrecs_352")
+    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_352")
 
 
 if __name__ == '__main__':

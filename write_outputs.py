@@ -29,7 +29,7 @@ import tensorflow as tf
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 #from tensorflow.python.client import device_lib
 #print(device_lib.list_local_devices())
@@ -37,7 +37,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 # import input & output modules 
 import Data_IO.data_input as data_input
 import Data_IO.data_output as data_output
-PHASE = 'train'
+PHASE = 'train_test'
 
 ####################################################
 ####################################################
@@ -62,9 +62,9 @@ def _set_control_params(modelParams):
     #params['shardMeta'] = model_cnn.getShardsMetaInfo(FLAGS.dataDir, params['phase'])
     modelParams['existingParams'] = None
 
-    if modelParams['phase'] == 'train':
+    if modelParams['phase'] == 'train_test':
         modelParams['activeBatchSize'] = modelParams['trainBatchSize']
-        modelParams['maxSteps'] = modelParams['trainMaxSteps']
+        modelParams['maxSteps'] = int(1+modelParams['numTrainDatasetExamples']/modelParams['activeBatchSize'])#modelParams['trainMaxSteps']
         modelParams['numExamples'] = modelParams['numTrainDatasetExamples']
         modelParams['dataDir'] = modelParams['trainDataDir']
         modelParams['logDir'] = modelParams['trainLogDir']
@@ -134,13 +134,11 @@ def train(modelParams, epochNumber):
         # Start the queue runners.
         tf.train.start_queue_runners(sess=sess)
         print('QueueRunner  started')
-
-        summaryWriter = tf.summary.FileWriter(modelParams['trainLogDir'], sess.graph)
         
         print('Training     started')
         durationSum = 0
         durationSumAll = 0
-        for step in xrange(0, 1000):
+        for step in xrange(0, modelParams['maxSteps']):
             startTime = time.time()
             npfilename, npTargetP, npTargetT = sess.run([filename, targetP, targetT])
             duration = time.time() - startTime
