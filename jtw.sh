@@ -2,8 +2,8 @@
 ((i=0))
 while :
 do
-	((k=i+18000))
+	((k=i+10000))
 	echo $k
-	python3 evaluator.py 180916c2 $k
+	python3 evaluator.py 180912c2new $k
 	((i=i+1000))
 done

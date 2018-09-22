@@ -3,6 +3,7 @@ from __future__ import division
 
 import tensorflow as tf
 import numpy as np
+import Model_Factory.focal_loss as focal_loss
 
 def add_loss_summaries(total_loss, batchSize):
     """Add summaries for losses in calusa_heatmap model.
@@ -199,6 +200,13 @@ def _transformation_loss_nTuple_last(targetP, targetT, activeBatchSize):
     # Get and return L2 Loss between corresponding points
     return _l2_loss(pPoints, tPoints)
 
+def _focal_loss(targetP, targetT, gamma=0.4):
+    return focal_loss.focal_loss(targetP, targetT, gamma=gamma)
+
+def _focal_loss_2(targetP, targetT, gamma=0.7):
+    return focal_loss.focal_loss(targetP, targetT, gamma=gamma)
+
+
 def loss(pred, tval, **kwargs):
     """
     Choose the proper loss function and call it.
@@ -222,4 +230,8 @@ def loss(pred, tval, **kwargs):
         return _params_classification_gaussian_softmaxCrossentropy_loss_nTuple(pred, tval, 1, kwargs.get('activeBatchSize'))
     if lossFunction == '_transformation_loss_nTuple_last':
         return _transformation_loss_nTuple_last(pred, tval, kwargs.get('numTuple'), kwargs.get('activeBatchSize'))
+    if lossFunction == 'focal_loss':
+        return _focal_loss(pred, tval)
+    if lossFunction == 'focal_loss_2':
+        return _focal_loss(pred, tval)
 

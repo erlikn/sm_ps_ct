@@ -29,7 +29,7 @@ def _read_json_file(filename):
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):
     ######## No resizing - images are resized after parsing inside data_input.py
     data = cv2.imread(pngFolder+'/'+filenames[i], -1)
-
+    print(data.shape)
     #print(data.shape)
     #print(np.sum(np.sum(data, 0), 0))
     #cv2.imshow('mix', data)

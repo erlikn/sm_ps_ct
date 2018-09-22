@@ -29,15 +29,17 @@ def _read_json_file(filename):
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):
     ######## No resizing - images are resized after parsing inside data_input.py
     pngData = cv2.imread(pngFolder+'/'+filenames[i], -1)
-    binData = cv2.imread(pngFolder+'/../pngBinary/'+filenames[i], -1)
+    binData = cv2.resize(cv2.imread(pngFolder+'/../pngBinary/'+filenames[i], -1), (352, 256))
+    #print(pngData.shape)
+    #print(binData.shape)
     #print(pngFolder+'/'+filenames[i])
-
     #print(pngFolder+'/../pngBinary/'+filenames[i])
     #cv2.imshow('png', pngData)
     #cv2.imshow('bin', binData)
     data = np.stack([pngData, binData])
     data = np.swapaxes(np.swapaxes(data,0,1),1,2)
     data[:,:,1] = np.power(data[:,:,1], 2)/2
+    #print(data[:,:,1].min(), data[:,:,1].max(), data.shape)
     
     #print(data.shape)
     #print(np.sum(np.sum(data, 0), 0))
@@ -101,8 +103,8 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
 
 def create_tfrecords(pngFolder, filenames, writeFolder):
     # TODO(user): Populate the following variables from your example.
-    height = 352 # Image height
-    width = 256 # Image width
+    height = 256 # Image height
+    width = 352 # Image width
     encoded_image_data = None # Encoded image bytes
     image_format = 'png' # b'jpeg' or b'png``'
 
@@ -137,10 +139,10 @@ def main(_):
 
     print("Writing train records...")
     _set_folder(sys.argv[1]+"/train_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/trainpng", trainFilenames, sys.argv[1]+"/train_tfrecs_2c")
+    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_2c")
     print("Writing test records...")
     _set_folder(sys.argv[1]+"/test_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/testpng", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
+    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
 
 
 if __name__ == '__main__':

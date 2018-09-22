@@ -77,10 +77,10 @@ def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13
     ############# CONV3
     fireOut1, prevExpandDim = model_base.conv_fire_module('conv3', fireOut1, prevExpandDim,
                                                                   {'cnn3x3': modelShape[2]},
-                                                                  wd, stride=[1,2,2,1] , **kwargs)
+                                                                  wd, **kwargs)
     # Pooling1 2x2 wit stride 2
-    #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
-    #                      padding='SAME', name='maxpool3')
+    fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                          padding='SAME', name='maxpool3')
     # calc batch norm CONV3
     if kwargs.get('batchNorm'):
         fireOut2 = model_base.batch_norm('batchnorm3', fireOut1, dtype, kwargs.get('phase'))
@@ -111,12 +111,12 @@ def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13
     ############# CONV6
     fireOut2, prevExpandDim = model_base.conv_fire_module('conv6', fireOut2, prevExpandDim,
                                                                   {'cnn3x3': modelShape[5]},
-                                                         wd, stride=[1,2,2,1], **kwargs)
+                                                         wd, **kwargs)
     ###### Pooling1 2x2 wit stride 2
-    #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
-    #                      padding='SAME', name='maxpool2')
-    #fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
-    #                      padding='SAME', name='maxpool2')
+    fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                          padding='SAME', name='maxpool2')
+    fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                          padding='SAME', name='maxpool2')
     # calc batch norm CONV6
     if kwargs.get('batchNorm'):
         fireOut3 = model_base.batch_norm('batchnorm6', fireOut2, dtype, kwargs.get('phase'))
@@ -130,11 +130,13 @@ def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13
     ############# CONV8
     fireOut3, prevExpandDim = model_base.conv_fire_module('conv8', fireOut3, prevExpandDim,
                                                                   {'cnn3x3': modelShape[7]},
-                                                         wd, stride=[1,2,2,1], **kwargs)
+                                                         wd, **kwargs)
     ###### Pooling1 2x2 wit stride 2
-    fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1],
+    fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                           padding='SAME', name='maxpool3')
     fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                          padding='SAME', name='maxpool3')
+    fireOut3 = tf.nn.max_pool(fireOut3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                           padding='SAME', name='maxpool3')
     # calc batch norm CONV8
     if kwargs.get('batchNorm'):

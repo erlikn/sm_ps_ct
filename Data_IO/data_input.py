@@ -215,7 +215,7 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
                                                                     capacity=2*numPreprocessThreads*kwargs.get('activeBatchSize'))
 
         # Resize to the desired size
-        batchPngTemp = tf.image.resize_images(batchPngTemp, tf.constant([kwargs.get('pngRows'),kwargs.get('pngCols')], dtype=tf.int32))
+        #batchPngTemp = tf.image.resize_images(batchPngTemp, tf.constant([kwargs.get('pngRows'),kwargs.get('pngCols')], dtype=tf.int32))
 
         batchPngTemp = tf.cast(batchPngTemp, tf.float32)
         # Display the training images in the visualizer.

@@ -64,8 +64,8 @@ def parse_example_proto(exampleSerialized, **kwargs):
         'filename': _bytes_feature(str.encode(filenames[i])),
         'label': _float_nparray( numPassLabel.tolist()),  
     """
-    pngRows = 480
-    pngCols = 640
+    pngRows = 256
+    pngCols = 352
     pngCnls = kwargs.get('pngChannels') # 16bit 2channel
     labelSize = kwargs.get('logicalOutputSize')
     featureMap = {
@@ -95,64 +95,3 @@ def write_tfrecords_shard(pngDatalist, filenamelist, numPassLabellist, writeFold
     writer.close()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#    $$$$$$$$$$$$$$$$$$$$$$$$$$$
-#    def stixelnet_parse_example_proto(exampleSerialized, **kwargs):
-#    featureMap = {
-#        'filename': tf.FixedLenFeature([], dtype=tf.string),
-#        'image': tf.FixedLenFeature([], dtype=tf.string),
-#        'label': tf.FixedLenFeature([1], dtype=tf.int64),
-#        'mask' : tf.FixedLenFeature([kwargs.get('outputSize')], dtype=tf.float32)
-#        }
-#    features = tf.parse_single_example(exampleSerialized, featureMap)
-#    # filename
-#    filename = features['filename']
-#    # (rows_128 x cols_512 x n)
-#    image = _decode_byte_image(features['image'],kwargs.get('imageDepthRows'),kwargs.get('imageDepthCols'),kwargs.get('imageDepthChannels'))
-#    # label
-#    value = features['label']
-#    # mask
-#    mask = features['mask']
-#    mask = tf.reshape(mask, [kwargs.get('outputSize')])
-#    mask.set_shape([kwargs.get('outputSize')])
-#    
-#    return image, value, mask, filename
-#
-#
-#def stixelnet_tfrec_writer(listImg, listLabel, listMask, tfRecFolder, listTFname, shardNumber):
-#    # File path
-#    tfRecordPath = tfRecFolder + str(shardNumber) + ".tfrecords"
-#    # Make a tf_writer
-#    writer = tf.python_io.TFRecordWriter(tfRecordPath)
-#    for i in range(0, len(listImg)):
-#        # Images
-#        flatImage = listImg[i].reshape(rows*cols*deps)
-#        flatImage = np.asarray(flatImage, np.float32)
-#        flatImageList = flatImage.tostring()
-#        # Label
-#        label = listLabel[i]
-#        # Mask
-#        npMask = listMask[i]
-#        # Write tfrecord
-#        example = tf.train.Example(features=tf.train.Features(feature={
-#            'filename': _bytes_feature(listTFname[i].encode()),
-#            'image': _bytes_feature(flatImageList),
-#            'label': _int64_feature(label),
-#            'mask': _float_nparray(npMask) # 2D np array
-#            }))
-#        writer.write(example.SerializeToString())
-#    #   Close the writer
-#    writer.close()
