@@ -597,8 +597,8 @@ def conv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride
             convRelu = tf.nn.relu(conv, name=scope.name)
             _activation_summary(convRelu)
 
-            #if kwargs.get('batchNorm'):
-            #    convRelu = batch_norm('batchnorm', convRelu, dtype, kwargs.get('phase'))
+            if kwargs.get('batchNorm'):
+                convRelu = batch_norm('batchnorm', convRelu, dtype, kwargs.get('phase'))
 
         return convRelu, fireDims[cnnName]
         
