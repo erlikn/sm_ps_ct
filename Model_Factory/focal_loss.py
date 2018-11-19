@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.python.ops import array_ops
 
-def focal_loss(prediction_tensor, target_tensor, weights=None, alpha=0.25, gamma=2):
+def focal_loss(prediction_tensor, target_tensor, weights=None, alpha=0.25, gamma=1.5):
     r"""Compute focal loss for predictions.
         Multi-labels Focal loss formula:
             FL = -alpha * (z-p)^gamma * log(p) -(1-alpha) * p^gamma * log(1-p)

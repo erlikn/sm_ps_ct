@@ -26,7 +26,7 @@ import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 #import tensorflow.python.debug as tf_debug
-
+import shutil
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
@@ -63,32 +63,43 @@ def _set_control_params(modelParams):
     modelParams['existingParams'] = None
 
     if modelParams['phase'] == 'train':
+        modelParams['trainBatchSize'] = 1
         modelParams['activeBatchSize'] = modelParams['trainBatchSize']
         modelParams['maxSteps'] = int(modelParams['numTrainDatasetExamples']/modelParams['activeBatchSize'])+1 #modelParams['trainMaxSteps']
         modelParams['numExamples'] = modelParams['numTrainDatasetExamples']
         modelParams['dataDir'] = modelParams['trainDataDir']
         modelParams['logDir'] = modelParams['trainLogDir']
         modelParams['outputDir'] = modelParams['trainOutputDir']
-        
+    
     if modelParams['phase'] == 'test':
         modelParams['activeBatchSize'] = modelParams['testBatchSize']
-        modelParams['maxSteps'] = modelParams['testMaxSteps']*2
+        
+        modelParams['maxSteps'] = modelParams['testMaxSteps']
         modelParams['numExamples'] = modelParams['numTestDatasetExamples']
         modelParams['dataDir'] = modelParams['testDataDir']
         modelParams['logDir'] = modelParams['testLogDir']
         modelParams['outputDir'] = modelParams['testOutputDir']
-
-    import shutil
-    for theFile in os.listdir(modelParams['outputDir']):
-        filePath = os.path.join(modelParams['outputDir'], theFile)
-        try:
-            if os.path.isfile(filePath):
-                os.unlink(filePath)
-            elif os.path.isdir(filePath): 
-                shutil.rmtree(filePath)
-            print('Target folder cleaned : ', modelParams['outputDir'])
-        except Exception as e:
-            print(e)
+        
+        #modelParams['maxSteps'] = 300
+        #modelParams['numExamples'] = modelParams['numTestDatasetExamples']
+        #modelParams['dataDir'] = modelParams['trainDataDir']
+        #modelParams['logDir'] = modelParams['trainLogDir']
+        #modelParams['outputDir'] = modelParams['trainOutputDir']
+    
+    shutil.rmtree(modelParams['outputDir'])
+    os.mkdir(modelParams['outputDir'])
+    print('Target folder created : ', modelParams['outputDir'])
+    
+    #for theFile in os.listdir(modelParams['outputDir']):
+    #    filePath = os.path.join(modelParams['outputDir'], theFile)
+    #    try:
+    #        if os.path.isfile(filePath):
+    #            os.unlink(filePath)
+    #        elif os.path.isdir(filePath): 
+    #            shutil.rmtree(filePath)
+    #        print('Target folder cleaned : ', modelParams['outputDir'])
+    #    except Exception as e:
+    #        print(e)
 
     return modelParams
 ####################################################
@@ -100,69 +111,110 @@ def _set_control_params(modelParams):
 def train(modelParams, epochNumber):
     # import corresponding model name as model_cnn, specifed at json file
     model_cnn = importlib.import_module('Model_Factory.'+modelParams['modelName'])
-    
+
     if not os.path.exists(modelParams['dataDir']):
-        raise ValueError("No such data directory %s" % modelParams['dataDir'])
+    	raise ValueError("No such data directory %s" % modelParams['dataDir'])
 
     _setupLogging(os.path.join(modelParams['logDir'], "genlog"))
 
     with tf.Graph().as_default():
         # track the number of train calls (basically number of batches processed)
         globalStep = tf.get_variable('globalStep',
-                                     [],
-                                     initializer=tf.constant_initializer(0),
-                                     trainable=False)
-
+        							 [],
+        							 initializer=tf.constant_initializer(0),
+        							 trainable=False)
         # Get images inputs for model_cnn.
-        filename, pngTemp, targetT = data_input.inputs(**modelParams)
+        if modelParams['phase'] == 'v':
+        	filename, pngTemp, targetT = data_input.inputs_vali(**modelParams)
+        else:
+        	filename, pngTemp, targetT = data_input.inputs(**modelParams)
         print('Input        ready')
+#TEST###        filenametest, pngTemptest, targetTtest = data_input.inputs_test(**modelParams)
 
         # Build a Graph that computes the HAB predictions from the
         # inference model
         #targetP = model_cnn.inference(pngTemp, **modelParams)
-        targetP, l2reg = model_cnn.inference_l2reg(pngTemp, **modelParams)    
+        targetP, l2reg = model_cnn.inference_l2reg(pngTemp, **modelParams)
+#TEST###        targetPtest = model_cnn.inference(pngTemptest, **modelParams)
+        print(targetP.get_shape())
+        # loss model
+        if modelParams.get('classificationModel'):
+        	print('Classification model...')
+        	# loss on last tuple
+        	#loss = model_cnn.loss(targetP, targetT, **modelParams)
+        	loss = model_cnn.loss_l2reg(targetP, targetT, l2reg, **modelParams)
+#TEST###            losstest = model_cnn.loss(targetPtest, targetTtest, **modelParams)
+        else:
+        	print('Regression model...')
+        	# loss on last tuple
+        	loss = model_cnn.loss(targetP, targetT, **modelParams)
+			
+        # Build a Graph that trains the model with one batch of examples and
+        # updates the model parameters.
+        #opTrain = model_cnn.train(loss, globalStep, **modelParams)
         ##############################
-        print('Inference    ready')
+        print('Testing     ready')
+        # Create a saver.
+        saver = tf.train.Saver(tf.global_variables())
+        print('Saver        ready')
+
+        # Build the summary operation based on the TF collection of Summaries.
+        summaryOp = tf.summary.merge_all()
+        print('MergeSummary ready')
         # Build an initialization operation to run below.
         #init = tf.initialize_all_variables()
-        init = tf.global_variables_initializer()
+#        init = tf.global_variables_initializer()
 
+        #opCheck = tf.add_check_numerics_ops()
         # Start running operations on the Graph.
         config = tf.ConfigProto(log_device_placement=modelParams['logDevicePlacement'])
         config.gpu_options.allow_growth = True
         config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions.ON_1
         sess = tf.Session(config=config)
         print('Session      ready')
-
-        sess.run(init)
-
-        # Create a saver.
-        saver = tf.train.Saver(tf.global_variables())
+		
+        #sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+        #sess.add_tensor_filter("has_inf_or_nan", tf_debug.has_inf_or_nan)
+#        sess.run(init)
+		
         # restore a saver.
         print('Loading Ex-Model with epoch number %d ...', epochNumber)
         print('     ', modelParams['trainLogDir']+'_v/model.ckpt-'+str(epochNumber))
         saver.restore(sess, (modelParams['trainLogDir']+'_v/model.ckpt-'+str(epochNumber)))
-        #print('     ', modelParams['trainLogDir']+'/model.ckpt-'+str(epochNumber))
-        #saver.restore(sess, (modelParams['trainLogDir']+'/model.ckpt-'+str(epochNumber)))
+        #saver.restore(sess, (modelParams['trainLogDir']+'_30k/model.ckpt-29000'))
         print('Ex-Model     loaded')
 
         # Start the queue runners.
         tf.train.start_queue_runners(sess=sess)
         print('QueueRunner  started')
         
-        print('Training     started')
+        summaryWriter = tf.summary.FileWriter(modelParams['logDir'], sess.graph)
+        summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_v', sess.graph)
+#TEST###        summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_test', sess.graph)
+		
+        print('Testing     started')
         durationSum = 0
         durationSumAll = 0
+        prevLoss = 99999
+        prevValiSumLoss = 99999
+        prevaccur = 0
+        prevLossStep = 0
+        prevStep = 21000
+#TEST###        prevTestSumLoss = 99999
+        prevStep = int(modelParams['maxSteps']/2)
         l = list()
         import cv2
+        lossValueSum = 0
+        l2regValueSum = 0
         for step in xrange(0, modelParams['maxSteps']):#(0, 1000):
             startTime = time.time()
             #npfilename, npTargetP, npTargetT, npPng = sess.run([filename, targetP, targetT, pngTemp])
-            npfilename, npTargetP, npTargetT = sess.run([filename, targetP, targetT])
+            npfilename, npTargetP, npTargetT, lossValue, l2regValue = sess.run([filename, targetP, targetT, loss, l2reg])
             duration = time.time() - startTime
             #l.append(duration)
             print(duration, step, modelParams['maxSteps'])
-
+            lossValueSum += lossValue
+            l2regValueSum += l2regValue
             #print(npfilename)
             #print(npTargetT)
             #print(npTargetP)
@@ -175,10 +227,11 @@ def train(modelParams, epochNumber):
             #cv2.imshow('img1', p2)
             #cv2.waitKey(0)
             #print(npfilename)
+            print(duration, step, modelParams['maxSteps'], 'regul', l2regValue)
             data_output.output(str(10000+step), npfilename, npTargetP, npTargetT, **modelParams)
             # Print Progress Info
             if ((step % FLAGS.ProgressStepReportStep) == 0) or ((step+1) == modelParams['maxSteps']):
-                print('Progress: %.2f%%, Elapsed: %.2f mins, Training Completion in: %.2f mins --- %s' %
+                print('Progress: %.2f%%, Elapsed: %.2f mins, Testing Completion in: %.2f mins --- %s' %
                         (
                             (100*step)/modelParams['maxSteps'],
                             durationSum/60,
@@ -196,6 +249,12 @@ def train(modelParams, epochNumber):
         #l1 = np.array(l[1:-1])
         #print(np.average(l0))
         #print(np.average(l1))
+        print('----- maxsteps:', modelParams['maxSteps'], '--- loss avg:', lossValueSum/modelParams['maxSteps'], '--- l2regu avg:', l2regValueSum/modelParams['maxSteps'])
+        print('----- train scaled loss:', (lossValueSum/modelParams['maxSteps'])*modelParams['trainBatchSize'])
+        print('----- train scaled l2regu:', (l2regValueSum/modelParams['maxSteps'])*modelParams['trainBatchSize'])
+        print(modelParams['outputDir'])
+        
+        
         sess.close()
     tf.reset_default_graph()
 

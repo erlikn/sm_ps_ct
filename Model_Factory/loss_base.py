@@ -200,12 +200,20 @@ def _transformation_loss_nTuple_last(targetP, targetT, activeBatchSize):
     # Get and return L2 Loss between corresponding points
     return _l2_loss(pPoints, tPoints)
 
-def _focal_loss(targetP, targetT, gamma=0.4):
+def _focal_loss(targetP, targetT, gamma=0.7): #gamma=0.4
     return focal_loss.focal_loss(targetP, targetT, gamma=gamma)
 
 def _focal_loss_2(targetP, targetT, gamma=0.7):
     return focal_loss.focal_loss(targetP, targetT, gamma=gamma)
 
+def _ohem_loss(cls_prob, label, batchSize):
+    '''
+        cls_prob = batch * 6
+        label = batch * 6
+    '''
+    lossInd = tf.nn.softmax_cross_entropy_with_logits_v2(logits=cls_prob, labels=label)
+    lossInd,_ = tf.nn.top_k(lossInd, k=np.ceil(batchSize*0.7))
+    return tf.reduce_sum(lossInd)
 
 def loss(pred, tval, **kwargs):
     """
@@ -234,4 +242,57 @@ def loss(pred, tval, **kwargs):
         return _focal_loss(pred, tval)
     if lossFunction == 'focal_loss_2':
         return _focal_loss(pred, tval)
+    if lossFunction == 'ohem_loss':
+        return _ohem_loss(pred, tval, kwargs.get('activeBatchSize'))
 
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+######################### L2 WEIGHT RGULARIZATION #########################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+
+def _ohem_loss_l2reg(cls_prob, label, batchSize, beta, l2reg):
+    '''
+        cls_prob = batch * 6
+        label = batch * 6
+    '''
+    lossInd = tf.nn.softmax_cross_entropy_with_logits_v2(logits=cls_prob, labels=label)
+    lossInd,_ = tf.nn.top_k(lossInd, k=np.ceil(batchSize*0.5))
+    lossInd = tf.add(tf.reduce_sum(lossInd), beta*l2reg, name="loss_ohem")
+    return lossInd
+
+def _clsf_smce_l2reg(targetP, targetT, beta, l2reg):
+    '''
+    Takes in the targetP and targetT and calculates the softmax-cross entropy loss for each parameter
+    and sums them for each instance and sum again for each tuple in the batch
+    TargetT dimensions are [activeBatchSize, rows]
+    '''
+    targetT = tf.cast(targetT, tf.float32)
+    targetP = tf.cast(targetP, tf.float32)
+    #smce_l2reg_loss = tf.add(tf.nn.l2_loss(tf.nn.softmax_cross_entropy_with_logits_v2(logits=targetP, labels=targetT, dim=1)), l2reg, name="loss_smce_l2_l2reg")
+    smce_l2reg_loss = tf.add(tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=targetP, labels=targetT, dim=1)), beta*l2reg, name="loss_smce_sum_l2reg")
+    #smce_l2reg_loss = tf.add(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=targetP, labels=targetT, dim=1)), beta*l2reg, name="loss_smce_mean_l2reg")
+    return smce_l2reg_loss
+    
+def _focal_loss_l2reg(targetP, targetT, beta, l2reg, gamma=0.7): #gamma=0.4
+    return tf.add(focal_loss.focal_loss(targetP, targetT, gamma=gamma), beta*l2reg, name="loss_focal_l2reg")
+
+def loss_l2reg(pred, tval, l2reg, **kwargs):
+    """
+    Choose the proper loss function and call it.
+    """
+    lossFunction = kwargs.get('lossFunction')
+    if lossFunction == 'clsf_smce_l2reg':
+        return _clsf_smce_l2reg(pred, tval, 0.1, l2reg) #0.01
+    elif lossFunction == 'clsf_ohem_l2reg':
+        return _ohem_loss_l2reg(pred, tval, kwargs.get('activeBatchSize'), 0.1, l2reg) #0.01
+    elif lossFunction == 'clsf_focal_l2reg':
+        return _focal_loss_l2reg(pred, tval, 0.1, l2reg) #0.01

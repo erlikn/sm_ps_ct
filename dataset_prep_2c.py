@@ -66,7 +66,8 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
     numPassengers = 0
     for j in range(0,len(jsonData['frames'][jidx]['annotations'])):
         if(jsonData['frames'][jidx]['annotations'][j]['label'] == 'Head'):
-            numPassengers += 1
+            if jsonData['frames'][jidx]['annotations'][j]['width'] != 0 and jsonData['frames'][jidx]['annotations'][j]['height'] != 0:
+                numPassengers += 1
     if numPassengers==0:
         numPassLabel = np.array([1, 0, 0, 0, 0, 0], dtype=np.float32)
     elif numPassengers==1:
@@ -115,6 +116,16 @@ def create_tfrecords(pngFolder, filenames, writeFolder):
 
     print("Starting datawrite")
     num_cores = multiprocessing.cpu_count() - 2
+
+    ##############REMOVE AUGMENTED IMAGES
+    #newFilenames = list()
+    #for file in filenames:
+    #    if file[32]=='1' and file[42]=='0':
+    #        newFilenames.append(file)
+    #filenames = newFilenames
+    ##############
+
+
     #startTime = time.time()
     print('Progress = 0 %')
     for j in range(len(filenames)):
@@ -139,10 +150,10 @@ def main(_):
 
     print("Writing train records...")
     _set_folder(sys.argv[1]+"/train_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_2c")
-    print("Writing test records...")
-    _set_folder(sys.argv[1]+"/test_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
+    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_2c_NOAUG")
+    #print("Writing test records...")
+    #_set_folder(sys.argv[1]+"/test_tfrecs_2c")
+    #create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
 
 
 if __name__ == '__main__':

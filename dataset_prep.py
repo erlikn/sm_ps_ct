@@ -54,7 +54,8 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
     numPassengers = 0
     for j in range(0,len(jsonData['frames'][jidx]['annotations'])):
         if(jsonData['frames'][jidx]['annotations'][j]['label'] == 'Head'):
-            numPassengers += 1
+            if jsonData['frames'][jidx]['annotations'][j]['width'] != 0 and jsonData['frames'][jidx]['annotations'][j]['height'] != 0:
+                numPassengers += 1
     if numPassengers==0:
         numPassLabel = np.array([1, 0, 0, 0, 0, 0], dtype=np.float32)
     elif numPassengers==1:

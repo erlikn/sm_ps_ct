@@ -120,27 +120,28 @@ def _variable_with_weight_decay(name, shape, initializer, dtype, wd, trainable=T
 
 
 def batch_norm(name, tensorConv, dtype, phase):
-    #if phase == 'train':
-    #    training = True
-    #    print('BatchNorm Train')
-    #    #virtualBatchSize = None
-    #else:
-    #    training = False
-    #    print('BatchNorm TEST')
+    if phase == 'train':
+        training = True
+        print('BatchNorm Train')
+        #virtualBatchSize = None
+    else:
+        training = False
+        print('BatchNorm TEST')
     #return tf.layers.batch_normalization(tensorConv, name=name, training=training)
-
-    with tf.variable_scope(name):
-        # Calc batch mean for parallel module
-        batchMean, batchVar = tf.nn.moments(tensorConv, axes=[0]) # moments along x,y
-        scale = tf.Variable(tf.ones(tensorConv.get_shape()[-1]))
-        beta = tf.Variable(tf.zeros(tensorConv.get_shape()[-1]))
-        epsilon = 1e-3
-        if dtype is tf.float16:
-            scale = tf.cast(scale, tf.float16)
-            beta = tf.cast(beta, tf.float16)
-            epsilon = tf.cast(epsilon, tf.float16)
-        batchNorm = tf.nn.batch_normalization(tensorConv, batchMean, batchVar, beta, scale, epsilon)
-    return batchNorm
+    return tensorConv
+    
+    #with tf.variable_scope(name):
+    #    # Calc batch mean for parallel module
+    #    batchMean, batchVar = tf.nn.moments(tensorConv, axes=[0]) # moments along x,y
+    #    scale = tf.Variable(tf.ones(tensorConv.get_shape()[-1]))
+    #    beta = tf.Variable(tf.zeros(tensorConv.get_shape()[-1]))
+    #    epsilon = 1e-3
+    #    if dtype is tf.float16:
+    #        scale = tf.cast(scale, tf.float16)
+    #        beta = tf.cast(beta, tf.float16)
+    #        epsilon = tf.cast(epsilon, tf.float16)
+    #    batchNorm = tf.nn.batch_normalization(tensorConv, batchMean, batchVar, beta, scale, epsilon)
+    #return batchNorm
     
 
 def twin_correlation(name, prevLayerOut, prevLayerDim, d, s2, **kwargs):
@@ -601,6 +602,101 @@ def conv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride
                 convRelu = batch_norm('batchnorm', convRelu, dtype, kwargs.get('phase'))
 
         return convRelu, fireDims[cnnName]
+
+
+def conv_fire_module_l2regul(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=[1, 1, 1, 1], padding='SAME', **kwargs):
+    USE_FP_16 = kwargs.get('usefp16')
+    dtype = tf.float16 if USE_FP_16 else tf.float32
+    
+    existingParams = kwargs.get('existingParams')
+    
+    if (fireDims.get('cnnFC')):
+        cnnName = 'cnnFC'
+        kernelSizeR = int(prevLayerOut.get_shape()[1])
+        kernelSizeC = int(prevLayerOut.get_shape()[2])
+        padding = 'VALID'
+    if (fireDims.get('cnn1x1')):
+        cnnName = 'cnn1x1'
+        kernelSizeR = 1
+        kernelSizeC = 1
+    if (fireDims.get('cnn3x3')):
+        cnnName = 'cnn3x3'
+        kernelSizeR = 3
+        kernelSizeC = 3
+    if (fireDims.get('cnn5x5')):
+        cnnName = 'cnn5x5'
+        kernelSizeR = 5
+        kernelSizeC = 5
+    if (fireDims.get('cnn7x7')):
+        cnnName = 'cnn7x7'
+        kernelSizeR = 7
+        kernelSizeC = 7
+    if (fireDims.get('cnn11x5')):
+        cnnName = 'cnn11x5'
+        kernelSizeR = 11
+        kernelSizeC = 5
+    if (fireDims.get('cnn3x5')):
+        cnnName = 'cnn3x5'
+        kernelSizeR = 3
+        kernelSizeC = 5
+    if (fireDims.get('cnn1x3')):
+        cnnName = 'cnn1x3'
+        kernelSizeR = 1
+        kernelSizeC = 3
+    if (fireDims.get('cnn3x1')):
+        cnnName = 'cnn3x1'
+        kernelSizeR = 3
+        kernelSizeC = 1
+
+    print('----', name, cnnName, prevLayerDim, kernelSizeR, kernelSizeC, fireDims[cnnName], prevLayerOut.get_shape())
+
+    with tf.variable_scope(name):
+        with tf.variable_scope(cnnName) as scope:
+            layerName = scope.name.replace("/", "_")
+            #kernel = _variable_with_weight_decay('weights',
+            #                                     shape=[kernelSizeR, kernelSizeR, prevLayerDim, fireDims['cnn3x3']],
+            #                                     initializer=existingParams[layerName]['weights'] if (existingParams is not None and
+            #                                                                                         layerName in existingParams) else
+            #                                                    (tf.contrib.layers.xavier_initializer_conv2d() if kwargs.get('phase')=='train' else
+            #                                                     tf.constant_initializer(0.0, dtype=dtype)),
+            #                                     dtype=dtype,
+            # wd=wd,
+            #                                     trainable=kwargs.get('tuneExistingWeights') if (existingParams is not None and 
+            #                                                                               layerName in existingParams) else True)
+            stddev = np.sqrt(2/np.prod(prevLayerOut.get_shape().as_list()[1:]))
+            kernel = _variable_with_weight_decay('weights',
+                                                 shape=[kernelSizeR, kernelSizeC, prevLayerDim, fireDims[cnnName]],
+                                                 initializer=existingParams[layerName]['weights'] if (existingParams is not None and
+                                                                                                     layerName in existingParams) else
+                                                                (tf.random_normal_initializer(stddev=stddev) if kwargs.get('phase')=='train' else
+                                                                 tf.constant_initializer(0.0, dtype=dtype)),
+                                                 dtype=dtype,
+                                                 wd=wd,
+                                                 trainable=kwargs.get('tuneExistingWeights') if (existingParams is not None and 
+                                                                                           layerName in existingParams) else True)
+            conv = tf.nn.conv2d(prevLayerOut, kernel, stride, padding=padding)
+
+            if kwargs.get('weightNorm'):
+                # calc weight norm
+                conv = batch_norm('weight_norm', conv, dtype, kwargs.get('phase'))
+
+            with tf.variable_scope('biases', reuse=tf.AUTO_REUSE):
+                if existingParams is not None and layerName in existingParams:
+                    biases = tf.get_variable('biases',
+                                             initializer=existingParams[layerName]['biases'], dtype=dtype)
+                else:
+                    biases = tf.get_variable('biases', [fireDims[cnnName]],
+                                             initializer=tf.constant_initializer(0.0),
+                                             dtype=dtype)
+
+            conv = tf.nn.bias_add(conv, biases)
+            convRelu = tf.nn.relu(conv, name=scope.name)
+            _activation_summary(convRelu)
+
+            if kwargs.get('batchNorm'):
+                convRelu = batch_norm('batchnorm', convRelu, dtype, kwargs.get('phase'))
+            l2reg = tf.nn.l2_loss(kernel)
+        return convRelu, fireDims[cnnName], l2reg
         
 
 def conv_fire_module_sep(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
@@ -736,6 +832,52 @@ def conv_fire_inception_module(name, prevLayerOut, prevLayerDim, fireDims, wd=No
     
     return fireOut, prevExpandDim
 
+
+def conv_fire_inception_module_l2reg(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
+    if (fireDims.get('cnnFC')):
+        fireOut, prevExpandDim, l2reg0 = conv_fire_module_l2regul(name+'_inc_1x1_0', prevLayerOut, prevLayerDim, {'cnn1x1': prevLayerDim}, wd, stride=[1,1,1,1], **kwargs)
+        fireOut, prevExpandDim, l2reg1 = conv_fire_module_l2regul(name+'_inc_3x3_1', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
+        fireOut, prevExpandDim, l2reg2 = conv_fire_module_l2regul(name+'_inc_3x3_2', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
+        fireOut, prevExpandDim, l2reg3 = conv_fire_module_l2regul(name+'_inc_1x3_3', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
+        fireOut, prevExpandDim, l2reg4 = conv_fire_module_l2regul(name+'_inc_3x1_4', fireOut, prevExpandDim, {'cnn3x1': prevExpandDim}, wd, stride=[1,2,1,1], **kwargs)
+        fireOut, prevExpandDim, l2reg5 = conv_fire_module_l2regul(name+'_inc_1x3_5', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
+        fireOut, prevExpandDim, l2reg6 = conv_fire_module_l2regul(name+'_inc_3x1_6', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
+        l2reg = (l2reg0+l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6)/7
+
+    if (fireDims.get('cnn1x1')):
+        fireOut_1x1, prevExpandDim_1x1 = conv_fire_module(name, prevLayerOut, prevLayerDim, {'cnn1x1': fireDims.get('cnn1x1')}, wd, **kwargs)
+    if (fireDims.get('cnn3x3')):
+        fireOut_3x3, prevExpandDim_3x3 = conv_fire_module(name, prevLayerOut, prevLayerDim, {'cnn3x3': fireDims.get('cnn3x3')}, wd, **kwargs)
+    if (fireDims.get('cnn5x5')):
+        fireOut_5x5, prevExpandDim_5x5 = conv_fire_module(name, prevLayerOut, prevLayerDim, {'cnn5x5': fireDims.get('cnn5x5')}, wd, **kwargs)
+    #if (fireDims.get('cnn7x7')):
+    #    fireOut_1x1, prevExpandDim_1x1 = conv_fire_module(name, prevLayerOut, prevLayerDim, {'cnn7x7': fireDims.get('cnn7x7')}, wd, **kwargs)
+    
+    if (fireDims.get('cnn1x1') and fireDims.get('cnn3x3') and fireDims.get('cnn5x5')):
+        fireOut = tf.concat([fireOut_1x1, fireOut_3x3, fireOut_5x5], axis=3)
+        prevExpandDim = prevExpandDim_1x1+prevExpandDim_3x3+prevExpandDim_5x5
+    elif (fireDims.get('cnn3x3') and fireDims.get('cnn5x5')):
+        fireOut = tf.concat([fireOut_3x3, fireOut_5x5], axis=3)
+        prevExpandDim = prevExpandDim_3x3+prevExpandDim_5x5
+    elif (fireDims.get('cnn1x1') and fireDims.get('cnn3x3')):
+        fireOut = tf.concat([fireOut_1x1, fireOut_3x3], axis=3)
+        prevExpandDim = prevExpandDim_1x1+prevExpandDim_3x3
+    elif (fireDims.get('cnn1x1') and fireDims.get('cnn5x5')):
+        fireOut = tf.concat([fireOut_1x1, fireOut_5x5], axis=3)
+        prevExpandDim = prevExpandDim_1x1+prevExpandDim_5x5
+    elif fireDims.get('cnn1x1'):
+        fireOut = fireOut_1x1
+        prevExpandDim = prevExpandDim_1x1
+    elif fireDims.get('cnn3x3'):
+        fireOut = fireOut_3x3
+        prevExpandDim = prevExpandDim_3x3
+    elif fireDims.get('cnn5x5'):
+        fireOut = fireOut_5x5
+        prevExpandDim = prevExpandDim_5x5
+    
+    return fireOut, prevExpandDim, l2reg
+
+
 def fc_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
     USE_FP_16 = kwargs.get('usefp16')
     dtype = tf.float16 if USE_FP_16 else tf.float32
@@ -769,6 +911,42 @@ def fc_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs
             _activation_summary(fcRelu)
         
         return fcRelu, fireDims['fc']
+
+def fc_fire_module_l2regul(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
+    USE_FP_16 = kwargs.get('usefp16')
+    dtype = tf.float16 if USE_FP_16 else tf.float32
+
+    existingParams = kwargs.get('existingParams')
+
+    with tf.variable_scope(name):
+        with tf.variable_scope('fc') as scope:
+            stddev = np.sqrt(2/np.prod(prevLayerOut.get_shape().as_list()[1:]))
+            fcWeights = _variable_with_weight_decay('weights',
+                                                    shape=[prevLayerDim, fireDims['fc']],
+                                                    initializer=(tf.random_normal_initializer(stddev=stddev) if kwargs.get('phase')=='train'
+                                                                   else tf.constant_initializer(0.0, dtype=dtype)),
+                                                    dtype=dtype,
+                                                    wd=wd,
+                                                    trainable=kwargs.get('tuneExistingWeights') if (existingParams is not None and 
+                                                                                           layerName in existingParams) else True)
+            
+            # prevLayerOut is [batchSize, HxWxD], matmul -> [batchSize, fireDims['fc']]
+            fc = tf.matmul(prevLayerOut, fcWeights)
+
+            if kwargs.get('weightNorm'):
+                # calc weight norm
+                fc = batch_norm('weight_norm', fc, dtype, kwargs.get('phase'))
+            
+            with tf.variable_scope('biases', reuse=tf.AUTO_REUSE):
+                biases = tf.get_variable('biases', fireDims['fc'],
+                                         initializer=tf.constant_initializer(0.0), dtype=dtype)
+            fc = tf.nn.bias_add(fc, biases)
+            fcRelu = tf.nn.relu(fc, name=scope.name)
+            _activation_summary(fcRelu)
+            l2reg = tf.nn.l2_loss(fcWeights)
+
+        return fcRelu, fireDims['fc'], l2reg
+
 def fc_fire_LSTM_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
     USE_FP_16 = kwargs.get('usefp16')
     dtype = tf.float16 if USE_FP_16 else tf.float32
@@ -833,8 +1011,100 @@ def fc_regression_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **
         
         return fc, fireDims['fc']
 
+def fc_regression_module_l2regul(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
+    USE_FP_16 = kwargs.get('usefp16')
+    dtype = tf.float16 if USE_FP_16 else tf.float32
+
+    existingParams = kwargs.get('existingParams')
+
+    with tf.variable_scope(name):
+        with tf.variable_scope('fc', reuse=tf.AUTO_REUSE) as scope:
+            stddev = np.sqrt(2/np.prod(prevLayerOut.get_shape().as_list()[1:]))
+            fcWeights = _variable_with_weight_decay('weights',
+                                                    shape=[prevLayerDim, fireDims['fc']],
+                                                    initializer=(tf.random_normal_initializer(stddev=stddev) if kwargs.get('phase')=='train'
+                                                                   else tf.constant_initializer(0.0, dtype=dtype)),
+                                                    dtype=dtype,
+                                                    wd=wd,
+                                                    trainable=kwargs.get('tuneExistingWeights') if (existingParams is not None and 
+                                                                                           layerName in existingParams) else True)
+            
+            # prevLayerOut is [batchSize, HxWxD], matmul -> [batchSize, fireDims['fc']]
+            fc = tf.matmul(prevLayerOut, fcWeights)
+
+            if kwargs.get('weightNorm'):
+                # calc weight norm
+                fc = batch_norm('weight_norm', fc, dtype, kwargs.get('phase'))
+
+            biases = tf.get_variable('biases', fireDims['fc'],
+                                     initializer=tf.constant_initializer(0.0), dtype=dtype)
+            fc = tf.nn.bias_add(fc, biases)
+            _activation_summary(fc)
+            l2reg = tf.nn.l2_loss(fcWeights)
+        return fc, fireDims['fc'], l2reg
+
+
+def deconv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=[1, 1, 1, 1], padding='SAME', **kwargs):
+    USE_FP_16 = kwargs.get('usefp16')
+    dtype = tf.float16 if USE_FP_16 else tf.float32
+    
+    existingParams = kwargs.get('existingParams')
+    
+    if (fireDims.get('deConv1x1')):
+        cnnName = 'deConv1x1'
+        kernelSizeR = 1
+        kernelSizeC = 1
+    if (fireDims.get('deConv3x3')):
+        cnnName = 'deConv3x3'
+        kernelSizeR = 3
+        kernelSizeC = 3
+    if (fireDims.get('deConv5x5')):
+        cnnName = 'deConv5x5'
+        kernelSizeR = 5
+        kernelSizeC = 5
+    if (fireDims.get('deConv7x7')):
+        cnnName = 'deConv7x7'
+        kernelSizeR = 7
+        kernelSizeC = 7
+    if (fireDims.get('deConv11x5')):
+        cnnName = 'deConv11x5'
+        kernelSizeR = 11
+        kernelSizeC = 5
+    if (fireDims.get('deConv3x5')):
+        cnnName = 'deConv3x5'
+        kernelSizeR = 3
+        kernelSizeC = 5
+    if (fireDims.get('deConv1x3')):
+        cnnName = 'deConv1x3'
+        kernelSizeR = 1
+        kernelSizeC = 3
+    if (fireDims.get('deConv3x1')):
+        cnnName = 'deConv3x1'
+        kernelSizeR = 3
+        kernelSizeC = 1
+
+    print('----', name, cnnName, prevLayerDim, kernelSizeR, kernelSizeC, fireDims[cnnName], prevLayerOut.get_shape())
+
+    with tf.variable_scope(name):
+        with tf.variable_scope(cnnName) as scope:
+            layerName = scope.name.replace("/", "_")
+            stride=(1, 1)
+            padding='valid'
+            deConv = tf.nn.conv2d_transpose(inputs=prevLayerOut, filters=fireDims[cnnName], kernel_size=[kernelSizeR, kernelSizeC],
+                                          strides=stride, padding=padding, activation='relu', name=layerName)
+            
+            if kwargs.get('batchNorm'):
+                deConv = batch_norm('batchnorm', deConv, dtype, kwargs.get('phase'))
+
+        return deConv, fireDims[cnnName]
+        
+
+
 def loss(pred, tval, **kwargs):
     return loss_base.loss(pred, tval, **kwargs)
+
+def loss_l2reg(pred, tval, l2reg, **kwargs):
+    return loss_base.loss_l2reg(pred, tval, l2reg, **kwargs)
 
 def train(loss, globalStep, **kwargs):
     if kwargs.get('optimizer') == 'MomentumOptimizer':
@@ -843,6 +1113,8 @@ def train(loss, globalStep, **kwargs):
         optimizerParams = optimizer_params.get_adam_optimizer_params(globalStep, **kwargs)
     if kwargs.get('optimizer') == 'GradientDescentOptimizer':
         optimizerParams = optimizer_params.get_gradient_descent_optimizer_params(globalStep, **kwargs)
+    if kwargs.get('optimizer') == 'AdaGrad':
+        optimizerParams = optimizer_params.get_adagrad_optimizer_params(globalStep, **kwargs)
 
     # Generate moving averages of all losses and associated summaries.
     lossAveragesOp = loss_base.add_loss_summaries(loss, kwargs.get('activeBatchSize', None))
@@ -856,6 +1128,8 @@ def train(loss, globalStep, **kwargs):
             optim = tf.train.MomentumOptimizer(learning_rate=optimizerParams['learningRate'], momentum=optimizerParams['momentum'])
         if kwargs.get('optimizer') == 'GradientDescentOptimizer':
             optim = tf.train.GradientDescentOptimizer(learning_rate=optimizerParams['learningRate'])
+        if kwargs.get('optimizer') == 'AdaGrad':
+            optim = tf.train.AdamOptimizer(learning_rate=optimizerParams['learningRate'])
 
         grads, norm = tf.clip_by_global_norm(tf.gradients(loss, tvars), kwargs.get('clipNorm'))
 

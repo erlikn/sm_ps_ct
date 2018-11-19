@@ -18,6 +18,29 @@ def _get_learning_rate_piecewise_constant(globalStep, **kwargs):
     tf.summary.scalar('learning_rate', learningRate)
     return learningRate
 
+def _get_learning_rate_piecewise_shifted(globalStep, **kwargs):
+    # piecewise shifted learning rate
+    # 40% 35% 25%
+    #boundaries = [float(int(kwargs.get('trainMaxSteps')*0.4)),
+    #              float(int(kwargs.get('trainMaxSteps')*0.75))]
+    boundaries = [float(int(kwargs.get('trainMaxSteps')*0.25)),
+                  float(int(kwargs.get('trainMaxSteps')*0.5)),
+                  float(int(kwargs.get('trainMaxSteps')*0.75)),
+                  float(int(kwargs.get('trainMaxSteps')*0.9))]
+    #[0.005, 0.0005, 0.00005]
+    #values = [kwargs.get('initialLearningRate'), 
+    #          kwargs.get('initialLearningRate')*kwargs.get('learningRateDecayFactor'),
+    #          kwargs.get('initialLearningRate')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor')]
+    values = [kwargs.get('initialLearningRate'), 
+              kwargs.get('initialLearningRate')*kwargs.get('learningRateDecayFactor'),
+              kwargs.get('initialLearningRate')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor'),
+              kwargs.get('initialLearningRate')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor'),
+              kwargs.get('initialLearningRate')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor')*kwargs.get('learningRateDecayFactor')]
+    # piecewise constant learning rate
+    learningRate = tf.train.piecewise_constant(globalStep, boundaries, values)
+    tf.summary.scalar('learning_rate', learningRate)
+    return learningRate
+
 def get_momentum_optimizer_params(globalStep, **kwargs):
     learningRate = _get_learning_rate_piecewise_constant(globalStep, **kwargs)
     momentum = kwargs.get('momentum')
@@ -31,3 +54,9 @@ def get_adam_optimizer_params(globalStep, **kwargs):
 def get_gradient_descent_optimizer_params(globalStep, **kwargs):
     learningRate = _get_learning_rate_piecewise_constant(globalStep, **kwargs)
     return {'learningRate': learningRate}
+
+def get_adagrad_optimizer_params(globalStep, **kwargs):
+    #learningRate = _get_learning_rate_piecewise_constant(globalStep, **kwargs)
+    learningRate = _get_learning_rate_piecewise_shifted(globalStep, **kwargs)
+    return {'learningRate': learningRate}
+

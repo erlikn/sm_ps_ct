@@ -5,7 +5,6 @@ import json
 import importlib
 from os import listdir                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 from os.path import isfile, join
-print(os.getcwd())
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import sys
