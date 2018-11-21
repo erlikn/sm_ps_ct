@@ -67,7 +67,7 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     ############## CONV3
     fireOut1, prevExpandDim, l2reg3 = model_base.conv_fire_module_l2regul('conv3', fireOut1, prevExpandDim,
                                                                   {'cnn3x3': modelShape[2]},
-                                                                  wd, stride=[1,2,2,1], **kwargs)
+                                                                  wd, stride=[1,4,4,1], **kwargs)
     #fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool3')
     ############## CONV4
     fireOut1, prevExpandDim, l2reg4 = model_base.conv_fire_module_l2regul('conv4', fireOut1, prevExpandDim,
@@ -92,17 +92,20 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     #if kwargs.get('batchNorm'):
     #    fireOut1 = model_base.batch_norm('batchnorm9', fireOut1, dtype, kwargs.get('phase'))
     ############# FC1 layer with 1024 outputs
-    #fireOut1, prevExpandDim = model_base.fc_fire_module('fc2', fireOut1, prevExpandDim,
-    #                                                   {'fc': modelShape[9]},
-    #                                                   wd, **kwargs)
+    fireOut1, prevExpandDim, l2reg6 = model_base.fc_fire_module_l2regul('fc2', fireOut1, prevExpandDim,
+                                                       {'fc': modelShape[4]/2},
+                                                       wd, **kwargs)
     ## calc batch norm FC1
     #if kwargs.get('batchNorm'):
     #    fireOut1 = model_base.batch_norm('batchnorm10', fireOut1, dtype, kwargs.get('phase'))
     ############# FC2 layer with 8 outputs
-    fireOut1, prevExpandDim, l2reg6 = model_base.fc_regression_module_l2regul('fc3', fireOut1, prevExpandDim,
+    fireOut1, prevExpandDim, l2reg7 = model_base.fc_regression_module_l2regul('fc3', fireOut1, prevExpandDim,
                                                              {'fc': kwargs.get('networkOutputSize')},
                                                              wd, **kwargs)
-    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6)/6
+    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6+l2reg7)/7
+    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg7)/6
+#    l2reg = (l2reg1+l2reg2+l2reg3+l2reg5+l2reg6)/5
+#    l2reg = (l2reg1+l2reg2+l2reg5+l2reg6)/4
     return fireOut1, l2reg
 
 def loss(pred, target, **kwargs): # batchSize=Sne

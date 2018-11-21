@@ -64,7 +64,6 @@ def _activation_summary(x):
     #tf.histogram_summary(tensor_name + '/activations', x)
     tf.summary.scalar(tensor_name + '/sparsity', tf.nn.zero_fraction(x))
 
-
 def _variable_on_cpu(name, shape, initializer, dtype):
     """Helper to create a Variable stored on CPU memory.
     
@@ -79,7 +78,6 @@ def _variable_on_cpu(name, shape, initializer, dtype):
     with tf.device('/cpu:0'):
         var = tf.get_variable(name, shape, initializer=initializer, dtype=dtype)
     return var
-
 
 def _variable_with_weight_decay(name, shape, initializer, dtype, wd, trainable=True):
     """Helper to create an initialized Variable with weight decay.
@@ -117,8 +115,6 @@ def _variable_with_weight_decay(name, shape, initializer, dtype, wd, trainable=T
         
     return var
 
-
-
 def batch_norm(name, tensorConv, dtype, phase):
     if phase == 'train':
         training = True
@@ -129,20 +125,8 @@ def batch_norm(name, tensorConv, dtype, phase):
         print('BatchNorm TEST')
     #return tf.layers.batch_normalization(tensorConv, name=name, training=training)
     return tensorConv
-    
-    #with tf.variable_scope(name):
-    #    # Calc batch mean for parallel module
-    #    batchMean, batchVar = tf.nn.moments(tensorConv, axes=[0]) # moments along x,y
-    #    scale = tf.Variable(tf.ones(tensorConv.get_shape()[-1]))
-    #    beta = tf.Variable(tf.zeros(tensorConv.get_shape()[-1]))
-    #    epsilon = 1e-3
-    #    if dtype is tf.float16:
-    #        scale = tf.cast(scale, tf.float16)
-    #        beta = tf.cast(beta, tf.float16)
-    #        epsilon = tf.cast(epsilon, tf.float16)
-    #    batchNorm = tf.nn.batch_normalization(tensorConv, batchMean, batchVar, beta, scale, epsilon)
-    #return batchNorm
-    
+
+###############################################################    
 
 def twin_correlation(name, prevLayerOut, prevLayerDim, d, s2, **kwargs):
     dtype = tf.float16 if kwargs.get('usefp16') else tf.float32
@@ -603,7 +587,6 @@ def conv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride
 
         return convRelu, fireDims[cnnName]
 
-
 def conv_fire_module_l2regul(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=[1, 1, 1, 1], padding='SAME', **kwargs):
     USE_FP_16 = kwargs.get('usefp16')
     dtype = tf.float16 if USE_FP_16 else tf.float32
@@ -697,7 +680,6 @@ def conv_fire_module_l2regul(name, prevLayerOut, prevLayerDim, fireDims, wd=None
                 convRelu = batch_norm('batchnorm', convRelu, dtype, kwargs.get('phase'))
             l2reg = tf.nn.l2_loss(kernel)
         return convRelu, fireDims[cnnName], l2reg
-        
 
 def conv_fire_module_sep(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
     USE_FP_16 = kwargs.get('usefp16')
@@ -787,7 +769,6 @@ def conv_fire_module_sep(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **
             _activation_summary(convRelu)
 
         return convRelu, fireDims[cnnName]
-        
 
 def conv_fire_inception_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
     if (fireDims.get('cnnFC')):
@@ -832,17 +813,23 @@ def conv_fire_inception_module(name, prevLayerOut, prevLayerDim, fireDims, wd=No
     
     return fireOut, prevExpandDim
 
-
 def conv_fire_inception_module_l2reg(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):
     if (fireDims.get('cnnFC')):
-        fireOut, prevExpandDim, l2reg0 = conv_fire_module_l2regul(name+'_inc_1x1_0', prevLayerOut, prevLayerDim, {'cnn1x1': prevLayerDim}, wd, stride=[1,1,1,1], **kwargs)
-        fireOut, prevExpandDim, l2reg1 = conv_fire_module_l2regul(name+'_inc_3x3_1', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
-        fireOut, prevExpandDim, l2reg2 = conv_fire_module_l2regul(name+'_inc_3x3_2', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
-        fireOut, prevExpandDim, l2reg3 = conv_fire_module_l2regul(name+'_inc_1x3_3', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
-        fireOut, prevExpandDim, l2reg4 = conv_fire_module_l2regul(name+'_inc_3x1_4', fireOut, prevExpandDim, {'cnn3x1': prevExpandDim}, wd, stride=[1,2,1,1], **kwargs)
-        fireOut, prevExpandDim, l2reg5 = conv_fire_module_l2regul(name+'_inc_1x3_5', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
-        fireOut, prevExpandDim, l2reg6 = conv_fire_module_l2regul(name+'_inc_3x1_6', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
-        l2reg = (l2reg0+l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6)/7
+        fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_1x1_0', prevLayerOut, prevLayerDim, {'cnn1x1': prevLayerDim}, wd, stride=[1,1,1,1], **kwargs)
+        l2reg = l2regTemp
+        fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_3x3_1', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
+        l2reg += l2regTemp
+        fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_3x3_2', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
+        l2reg += l2regTemp
+        fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_1x3_3', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
+        l2reg += l2regTemp
+        fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_3x1_4', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
+        l2reg += l2regTemp
+        #fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_1x3_5', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
+        #l2reg += l2regTemp
+        #fireOut, prevExpandDim, l2regTemp = conv_fire_module_l2regul(name+'_inc_3x1_6', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
+        #l2reg += l2regTemp
+        l2reg = l2reg/5
 
     if (fireDims.get('cnn1x1')):
         fireOut_1x1, prevExpandDim_1x1 = conv_fire_module(name, prevLayerOut, prevLayerDim, {'cnn1x1': fireDims.get('cnn1x1')}, wd, **kwargs)
@@ -1120,8 +1107,9 @@ def train(loss, globalStep, **kwargs):
     lossAveragesOp = loss_base.add_loss_summaries(loss, kwargs.get('activeBatchSize', None))
     
     # Compute gradients.
+    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) # for batchnorm
     tvars = tf.trainable_variables()
-    with tf.control_dependencies([lossAveragesOp]):
+    with tf.control_dependencies(update_ops):
         if kwargs.get('optimizer') == 'AdamOptimizer':
             optim = tf.train.AdamOptimizer(learning_rate=optimizerParams['learningRate'], epsilon=optimizerParams['epsilon'])
         if kwargs.get('optimizer') == 'MomentumOptimizer':

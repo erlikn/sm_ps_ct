@@ -244,6 +244,7 @@ def loss(pred, tval, **kwargs):
         return _focal_loss(pred, tval)
     if lossFunction == 'ohem_loss':
         return _ohem_loss(pred, tval, kwargs.get('activeBatchSize'))
+    
 
 ###########################################################################
 ###########################################################################

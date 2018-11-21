@@ -37,7 +37,7 @@ def evaluate(resDict):
             c_n += 1
         counter+=1
         if counter%1==0:
-            print(10000+int(counter/1)-1, 100*c_p/(c_p+c_n))
+            #print(10000+int(counter/1)-1, 100*c_p/(c_p+c_n))
             c_p=0
             c_n=0
 #            if np.argmax(np.delete(p, pidx)) == tidx:

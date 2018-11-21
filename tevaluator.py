@@ -65,7 +65,7 @@ def main(argv=None):
 		while True:
 			if fileCheckpoint.is_file():
 				break
-			time.sleep(30)
+			time.sleep(10)
 		
 		argv[2] = evalStep
 		print("-------------------- EVALUATION STARTED -----------------")
@@ -83,8 +83,16 @@ def main(argv=None):
 		print('----')
 		print('---- 	curr	', evalStep, ' - ', acc, ' - ', accb )
 		print('---- 	best 	', bestStep, ' - ', bestAcc, ' - ', bestAccb )
-		accdict = {str(evalStep):[acc, accb]}
-		resDict.update(accdict)
+		keyid = list(resDict.keys())
+		if len(keyid)<1:
+			resDict = {str(evalStep):[acc, accb]}
+		else:
+			maxAcc = resDict[keyid[0]][0]
+			maxAccb = resDict[keyid[0]][1]
+			if acc > maxAcc or (acc == maxAcc and accb > maxAccb):
+				#accdict = {str(evalStep):[acc, accb]}
+				#resDict.update(accdict)
+				resDict = {str(evalStep):[acc, accb]}
 		print('---- 	writing 	', modelName+'.json')		
 		write_json_file(modelName+'.json', resDict)
 		print('----')

@@ -88,42 +88,6 @@ def write(runName):
         dataLocal['classificationModel'] = True
         _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     ####
-    elif runName == '180412_clsf_g_smce': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
-        dataLocal['classificationModel'] = True
-        _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180418_clsf_smce': # binary classification  >=2 or not
-        dataLocal['classificationModel'] = True
-        _180418_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180809': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
-        dataLocal['classificationModel'] = True
-        _180809(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180810': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
-        dataLocal['classificationModel'] = True
-        _180810(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180814c2': # using 171003_ITR_B but with gaussian location softmax loss for all last tuple
-        dataLocal['classificationModel'] = True
-        _180814c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180812c2': # using 171003_ITR_B 
-        dataLocal['classificationModel'] = True
-        _180812c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180813c2': # using 171003_ITR_B 
-        dataLocal['classificationModel'] = True
-        _180813c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180904c2': # using 171003_ITR_B 
-        dataLocal['classificationModel'] = True
-        _180904c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
-    elif runName == '180910c2': # using 180814c2 inceptionized 
-        dataLocal['classificationModel'] = True
-        _180910c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
-    ####
     elif runName == '180911c2': # using 180814c2 inceptionized 
         dataLocal['classificationModel'] = True
         _180911c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
@@ -152,9 +116,21 @@ def write(runName):
         dataLocal['classificationModel'] = True
         _181113c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     ####
+    elif runName == '181113c1': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _181113c1(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '181114c1': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _181114c1(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
     elif runName == '181114c2': # using 1800912c2new2 
         dataLocal['classificationModel'] = True
         _181114c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '1811121c2': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _1811121c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     else:
         print("--error: Model name not found!")
         return False
@@ -162,408 +138,6 @@ def write(runName):
     ##############
     ##############
     ##############
-
-def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_8l2f'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
-        data['trainBatchSize'] = 8#8#16
-        data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 21020
-        data['numTestDatasetExamples'] = 131
-        data['logicalOutputSize'] = 6
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-        
-        data['pngRows'] = 240
-        data['pngCols'] = 320
-
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/'
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
-def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_8l2f'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
-        data['trainBatchSize'] = 8#8#16
-        data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 21020
-        data['numTestDatasetExamples'] = 131
-        data['logicalOutputSize'] = 6
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_gaussian_softmaxCrossentropy_loss"
-        
-        data['pngRows'] = 240
-        data['pngCols'] = 320
-        
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-        
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/' 
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
-def _180418_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_8l2f'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        data['modelShape'] = [64, 64, 64, 64, 128, 128, 128, 128, 1024]
-        data['trainBatchSize'] = 8#8#16
-        data['testBatchSize'] = 8#8#16
-        data['numTrainDatasetExamples'] = 21020
-        data['numTestDatasetExamples'] = 131
-        data['logicalOutputSize'] = 2
-        data['outputSize']=2
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-        
-        data['pngRows'] = 240
-        data['pngCols'] = 320
-
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs_b_2/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs_b_2/'
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
-def _180809(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_4l2f'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        data['modelShape'] = [64, 96, 96, 128, 512]
-        data['trainBatchSize'] = 8#16
-        data['testBatchSize'] = 8#16
-        data['numTrainDatasetExamples'] = 21020
-        data['numTestDatasetExamples'] = 131
-        data['logicalOutputSize'] = 6
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-        
-        data['pngRows'] = 240
-        data['pngCols'] = 320
-        
-        ## runs
-        data['trainMaxSteps'] = 120000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-        
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs/' 
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-    
-def _180810(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_4l2f_new'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        #data['modelShape'] = [48, 96, 96, 128, 512]
-        data['modelShape'] = [16, 32, 0, 0, 256]
-        data['trainBatchSize'] = 32#16
-        data['testBatchSize'] = 32#16
-        data['numTrainDatasetExamples'] = 21020
-        data['numTestDatasetExamples'] = 131
-        data['logicalOutputSize'] = 2
-        data['outputSize']=2
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-        
-        data['pngRows'] = 240
-        data['pngCols'] = 320
-
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-
-        data['trainDataDir'] = '../Data/raw_labeled/train_tfrecs_b_2/'
-        data['testDataDir'] = '../Data/raw_labeled/test_tfrecs_b_2/'
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
-def _180814c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-    if reCompile:
-        data['modelName'] = 'cnn_4l2f_new'
-        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-        #data['modelShape'] = [48, 96, 96, 128, 512]
-        data['modelShape'] = [32, 32, 64, 64, 256]
-        data['trainBatchSize'] = 16#32#16
-        data['testBatchSize'] = 16#32#16
-        data['numTrainDatasetExamples'] = 21020
-        data['numTestDatasetExamples'] = 131
-        data['logicalOutputSize'] = 6
-        data['outputSize']=6
-        data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-        
-        ######## No resizing - images are resized after parsing inside data_input.py
-        data['pngRows'] = 240
-        data['pngCols'] = 320
-        data['pngChannels'] = 2
-        ## runs
-        data['trainMaxSteps'] = 75000
-        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-        
-        data['numValiDatasetExamples'] = 1024
-        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
-
-        data['trainLogDir'] = trainLogDirBase + runName
-        data['testLogDir'] = testLogDirBase + runName
-
-        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
-        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
-        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
-
-        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-        data['testOutputDir'] = data['testLogDir']+'/target/'
-        _set_folders(data['trainOutputDir'])
-        _set_folders(data['testOutputDir'])
-        data['batchNorm'] = True
-        data['weightNorm'] = False
-        write_json_file(runName+'.json', data)
-
-"""
-#def _180812c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-#    if reCompile:
-#        data['modelName'] = 'cnn_2l2f_new'
-#        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-#        #data['modelShape'] = [48, 96, 96, 128, 512]
-#        data['modelShape'] = [64, 128, 512]
-#        data['trainBatchSize'] = 16#32#16
-#        data['testBatchSize'] = 16#32#16
-#        data['numTrainDatasetExamples'] = 21020
-#        data['numTestDatasetExamples'] = 131
-#        data['logicalOutputSize'] = 6
-#        data['outputSize']=6
-#        data['networkOutputSize'] = data['logicalOutputSize']
-#        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-#        
-#        ######## No resizing - images are resized after parsing inside data_input.py
-#        data['pngRows'] = 240
-#        data['pngCols'] = 320
-#        data['pngChannels'] = 2
-#        ## runs
-#        data['trainMaxSteps'] = 75000
-#        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-#        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-#        
-#        data['numValiDatasetExamples'] = 1024
-#        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
-#
-#        data['trainLogDir'] = trainLogDirBase + runName
-#        data['testLogDir'] = testLogDirBase + runName
-#
-#        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
-#        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
-#        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
-#
-#        data['dropOutKeepRate'] = 0.7
-#        data['optimizer'] = 'AdamOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-#        data['momentum'] = 0.9
-#        data['initialLearningRate'] = 0.02
-#        data['learningRateDecayFactor'] = 0.05
-#        data['epsilon'] = 0.1
-#
-#        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-#        data['testOutputDir'] = data['testLogDir']+'/target/'
-#        _set_folders(data['trainOutputDir'])
-#        _set_folders(data['testOutputDir'])
-#        data['batchNorm'] = True
-#        data['weightNorm'] = False
-#        write_json_file(runName+'.json', data)
-#def _180813c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-#    if reCompile:
-#        data['modelName'] = 'cnn_6l2f_new_0813'
-#        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-#        #data['modelShape'] = [48, 96, 96, 128, 512]
-#        data['modelShape'] = [32, 32, 64, 64, 96, 96, 256]
-#        data['trainBatchSize'] = 16#32#16
-#        data['testBatchSize'] = 16#32#16
-#        data['numTrainDatasetExamples'] = 21020
-#        data['numTestDatasetExamples'] = 131
-#        data['logicalOutputSize'] = 6
-#        data['outputSize']=6
-#        data['networkOutputSize'] = data['logicalOutputSize']
-#        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-#        
-#        ######## No resizing - images are resized after parsing inside data_input.py
-#        data['pngRows'] = 240
-#        data['pngCols'] = 320
-#        data['pngChannels'] = 2
-#        ## runs
-#        data['trainMaxSteps'] = 75000
-#        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-#        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-#        
-#        data['numValiDatasetExamples'] = 1024
-#        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
-#
-#        data['trainLogDir'] = trainLogDirBase + runName
-#        data['testLogDir'] = testLogDirBase + runName
-#
-#        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
-#        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
-#        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
-#
-#        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-#        data['testOutputDir'] = data['testLogDir']+'/target/'
-#        _set_folders(data['trainOutputDir'])
-#        _set_folders(data['testOutputDir'])
-#        data['batchNorm'] = True
-#        data['weightNorm'] = False
-#        write_json_file(runName+'.json', data)
-#
-#def _180904c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-#    if reCompile:
-#        data['modelName'] = 'cnn_6l2f_new_0904'
-#        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-#        #data['modelShape'] = [48, 96, 96, 128, 512]
-#        data['modelShape'] = [32, 32, 64, 64, 96, 96, 256]
-#        data['trainBatchSize'] = 16#32#16
-#        data['testBatchSize'] = 16#32#16
-#        data['numTrainDatasetExamples'] = 21020
-#        data['numTestDatasetExamples'] = 131
-#        data['logicalOutputSize'] = 6
-#        data['outputSize']=6
-#        data['networkOutputSize'] = data['logicalOutputSize']
-#        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-#        
-#        ######## No resizing - images are resized after parsing inside data_input.py
-#        data['pngRows'] = 240
-#        data['pngCols'] = 320
-#        data['pngChannels'] = 2
-#        ## runs
-#        data['trainMaxSteps'] = 75000
-#        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-#        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-#        
-#        data['numValiDatasetExamples'] = 1024
-#        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
-#
-#        data['trainLogDir'] = trainLogDirBase + runName
-#        data['testLogDir'] = testLogDirBase + runName
-#
-#        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
-#        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
-#        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
-#
-#        data['dropOutKeepRate'] = 0.7
-#        data['optimizer'] = 'AdamOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-#        data['momentum'] = 0.9
-#        data['initialLearningRate'] = 0.02
-#        data['learningRateDecayFactor'] = 0.05
-#        data['epsilon'] = 0.1
-#
-#        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-#        data['testOutputDir'] = data['testLogDir']+'/target/'
-#        _set_folders(data['trainOutputDir'])
-#        _set_folders(data['testOutputDir'])
-#        data['batchNorm'] = True
-#        data['weightNorm'] = False
-#        write_json_file(runName+'.json', data)
-#def _180910c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
-#    if reCompile:
-#        data['modelName'] = 'cnn_8l2f'
-#        data['optimizer'] = 'MomentumOptimizer' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
-#        #data['modelShape'] = [48, 96, 96, 128, 512]
-#        data['modelShape'] = [64, 64, 80, 80, 96, 96, 128, 128, 256]
-#        data['trainBatchSize'] = 16#32#16
-#        data['testBatchSize'] = 16#32#16
-#        data['numTrainDatasetExamples'] = 21020
-#        data['numTestDatasetExamples'] = 131
-#        data['logicalOutputSize'] = 6
-#        data['outputSize']=6
-#        data['networkOutputSize'] = data['logicalOutputSize']
-#        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"
-#        
-#        ######## No resizing - images are resized after parsing inside data_input.py
-#        data['pngRows'] = 240
-#        data['pngCols'] = 320
-#        data['pngChannels'] = 2
-#        ## runs
-#        data['trainMaxSteps'] = 75000
-#        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
-#        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
-#        
-#        data['numValiDatasetExamples'] = 1024
-#        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
-#
-#        data['trainLogDir'] = trainLogDirBase + runName
-#        data['testLogDir'] = testLogDirBase + runName
-#
-#        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
-#        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
-#        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
-#
-#        data['trainOutputDir'] = data['trainLogDir']+'/target/'
-#        data['testOutputDir'] = data['testLogDir']+'/target/'
-#        _set_folders(data['trainOutputDir'])
-#        _set_folders(data['testOutputDir'])
-#        data['batchNorm'] = True
-#        data['weightNorm'] = False
-#        write_json_file(runName+'.json', data)
-"""
 def _180911c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
         data['modelName'] = 'cnn_8l2f'
@@ -834,7 +408,7 @@ def _180916c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         write_json_file(runName+'.json', data)
 
 
-def _181113c2_91_5(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+def _181113c2_91_6(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
         data['modelName'] = 'cnn_4lf'
         
@@ -854,8 +428,8 @@ def _181113c2_91_5(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['logicalOutputSize'] = 6
         data['outputSize']=6
         data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "clsf_smce_l2reg" # 91.60 @ 4250
-        #data['lossFunction'] = "clsf_ohem_l2reg" # 88.54 @ 9750
+        data['lossFunction'] = "clsf_smce_l2reg" # 88.549 - 96.183 @ 8250
+        #data['lossFunction'] = "clsf_ohem_l2reg" # 91.603 - 98.473 @ 4250
 
         ######## No resizing - images are resized after parsing inside data_input.py
         data['pngRows'] = 256
@@ -887,6 +461,153 @@ def _181113c2_91_5(reCompile, trainLogDirBase, testLogDirBase, runName, data):
 def _181113c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
         data['modelName'] = 'cnn_4lf'
+        
+        data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.001
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "clsf_smce_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 2
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_2c/'
+        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_2c/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_2c/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _181113c1(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_4lf'
+        
+        data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.001
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "clsf_ohem_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 1
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_1c/'
+        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_1c/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_1c/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _181114c1(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_6lf'
+        
+        data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.001
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "clsf_smce_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 1
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_1c/'
+        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_1c/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_1c/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _181114c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_6lf'
         
         data['dropOutKeepRate'] = 0.5
         data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
@@ -933,19 +654,19 @@ def _181113c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['weightNorm'] = False
         write_json_file(runName+'.json', data)
 
-def _181114c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+def _1811121c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
-        data['modelName'] = 'cnn_6lf'
+        data['modelName'] = 'mobilenet'
         
-        data['dropOutKeepRate'] = 0.5
+        #data['dropOutKeepRate'] = 0.5
         data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
         data['momentum'] = 0.9
-        data['initialLearningRate'] = 0.001
+        data['initialLearningRate'] = 0.0005
         data['learningRateDecayFactor'] = 0.1
         data['epsilon'] = 0.1
         
-        #data['modelShape'] = [0   1    2    3    4,   5]
-        data['modelShape'] = [64, 64, 128, 128, 128, 256]
+        #data['modelShape'] = [0   1    2    3    4]
+        #data['modelShape'] = [64, 128, 256, 512, 256]
         data['trainBatchSize'] = 32#16
         data['testBatchSize'] = 1#16
         data['numTrainDatasetExamples'] = 21020
@@ -953,14 +674,14 @@ def _181114c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['logicalOutputSize'] = 6
         data['outputSize']=6
         data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "clsf_smce_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg
+        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
         
         ######## No resizing - images are resized after parsing inside data_input.py
         data['pngRows'] = 256
         data['pngCols'] = 352
         data['pngChannels'] = 2
         ## runs
-        data['trainMaxSteps'] = 40000
+        data['trainMaxSteps'] = 20010
         data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
         data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
         

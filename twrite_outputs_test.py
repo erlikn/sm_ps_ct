@@ -184,6 +184,18 @@ def train(modelParams, epochNumber):
         #saver.restore(sess, (modelParams['trainLogDir']+'_30k/model.ckpt-29000'))
         print('Ex-Model     loaded')
 
+
+        if True:
+            # if True: freeze graph
+            tf.train.write_graph(sess.graph.as_graph_def(), '.' , modelParams['trainLogDir']+'_v/model.pbtxt', as_text=True)
+            # Output nodes
+            output_node_names =[n.name for n in tf.get_default_graph().as_graph_def().node]
+            # Freeze the graph
+            frozen_graph_def = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, output_node_names)
+            # Save the frozen graph
+            with open(modelParams['trainLogDir']+'_v/model.pb', 'wb') as f:
+                f.write(frozen_graph_def.SerializeToString())
+
         # Start the queue runners.
         tf.train.start_queue_runners(sess=sess)
         print('QueueRunner  started')
@@ -206,12 +218,28 @@ def train(modelParams, epochNumber):
         import cv2
         lossValueSum = 0
         l2regValueSum = 0
+
+        total_parameters = 0
+        for variable in tf.trainable_variables():
+            # shape is an array of tf.Dimension
+            shape = variable.get_shape()
+            #print(shape)
+            #print(len(shape))
+            variable_parameters = 1
+            for dim in shape:
+                #print(dim)
+                variable_parameters *= dim.value
+            #print(variable_parameters)
+            total_parameters += variable_parameters
+        print('-----total parameters-------- ', total_parameters)
+        
         for step in xrange(0, modelParams['maxSteps']):#(0, 1000):
             startTime = time.time()
             #npfilename, npTargetP, npTargetT, npPng = sess.run([filename, targetP, targetT, pngTemp])
             npfilename, npTargetP, npTargetT, lossValue, l2regValue = sess.run([filename, targetP, targetT, loss, l2reg])
             duration = time.time() - startTime
-            #l.append(duration)
+            if step != 0:
+                l.append(duration)
             print(duration, step, modelParams['maxSteps'])
             lossValueSum += lossValue
             l2regValueSum += l2regValue
@@ -244,7 +272,7 @@ def train(modelParams, epochNumber):
             #
             #if step == 130:
             #    modelParams['phase'] = 'test'
-        #print(l)
+        print(np.array(l).mean())
         #l0 = np.array(l)
         #l1 = np.array(l[1:-1])
         #print(np.average(l0))

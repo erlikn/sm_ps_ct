@@ -150,10 +150,10 @@ def main(_):
 
     print("Writing train records...")
     _set_folder(sys.argv[1]+"/train_tfrecs_2c")
-    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_2c_NOAUG")
-    #print("Writing test records...")
-    #_set_folder(sys.argv[1]+"/test_tfrecs_2c")
-    #create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
+    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_2c")
+    print("Writing test records...")
+    _set_folder(sys.argv[1]+"/test_tfrecs_2c")
+    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_2c")
 
 
 if __name__ == '__main__':

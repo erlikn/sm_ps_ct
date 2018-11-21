@@ -29,7 +29,16 @@ def _read_json_file(filename):
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):
     ######## No resizing - images are resized after parsing inside data_input.py
     data = cv2.imread(pngFolder+'/'+filenames[i], -1)
-    print(data.shape)
+    # data.min.global = 8085 
+    # data.max.global = 32931
+    data[data==0]=8600
+    data = (data - 8200) / (33000-8000)
+    #z[1] += data.mean()
+    #if data.mean()>1:
+    #    print(data.mean())
+    #return z
+
+    #print(data.shape)
     #print(data.shape)
     #print(np.sum(np.sum(data, 0), 0))
     #cv2.imshow('mix', data)
@@ -125,11 +134,11 @@ def main(_):
     testFilenames = _read_json_file(sys.argv[1]+'/filenames_test.json')
 
     print("Writing train records...")
-    _set_folder(sys.argv[1]+"/train_tfrecs_352")
-    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_352")
+    _set_folder(sys.argv[1]+"/train_tfrecs_1c")
+    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_1c")
     print("Writing test records...")
-    _set_folder(sys.argv[1]+"/test_tfrecs_352")
-    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_352")
+    _set_folder(sys.argv[1]+"/test_tfrecs_1c")
+    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_1c")
 
 
 if __name__ == '__main__':

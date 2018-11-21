@@ -220,7 +220,10 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
         batchPngTemp = tf.cast(batchPngTemp, tf.float32)
         # Display the training images in the visualizer.
         for i in range(kwargs.get('pngChannels')):
-            tf.summary.image('tempImg_'+str(i)+'_', tf.split(batchPngTemp, 2, 3)[0])
+            if kwargs.get('pngChannels') > 1:
+                tf.summary.image('tempImg_'+str(i)+'_', tf.split(batchPngTemp, 2, 3)[0])
+            if kwargs.get('pngChannels') == 1:
+                tf.summary.image('tempImg_'+str(i)+'_', batchPngTemp)
         
         #batchPngTemp = image_preprocessing(batchPngTemp, **kwargs)
         return batchFilename, batchPngTemp, batchTarget

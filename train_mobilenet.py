@@ -50,7 +50,7 @@ tf.app.flags.DEFINE_integer('printOutStep', 100,
 							"""Number of batches to run.""")
 tf.app.flags.DEFINE_integer('summaryWriteStep', 100,
 							"""Number of batches to run.""")
-tf.app.flags.DEFINE_integer('modelCheckpointStep', 50,
+tf.app.flags.DEFINE_integer('modelCheckpointStep', 1000,
 							"""Number of batches to run.""")
 tf.app.flags.DEFINE_integer('ProgressStepReportStep', 250,
 							"""Number of batches to run.""")
@@ -107,21 +107,16 @@ def train(modelParams, epochNumber):
 		else:
 			filename, pngTemp, targetT = data_input.inputs(**modelParams)
 		print('Input        ready')
-#TEST###        filenametest, pngTemptest, targetTtest = data_input.inputs_test(**modelParams)
 
 		# Build a Graph that computes the HAB predictions from the
 		# inference model
-		#targetP = model_cnn.inference(pngTemp, **modelParams)
-		targetP, l2reg = model_cnn.inference_l2reg(pngTemp, **modelParams)
-#TEST###        targetPtest = model_cnn.inference(pngTemptest, **modelParams)
-		print(targetP.get_shape())
+		targetP = model_cnn.inference(pngTemp, **modelParams)
+		#print(targetP.get_shape())
 		# loss model
 		if modelParams.get('classificationModel'):
 			print('Classification model...')
 			# loss on last tuple
-			#loss = model_cnn.loss(targetP, targetT, **modelParams)
-			loss = model_cnn.loss_l2reg(targetP, targetT, l2reg, **modelParams)
-#TEST###            losstest = model_cnn.loss(targetPtest, targetTtest, **modelParams)
+			loss = model_cnn.loss(targetP, targetT, **modelParams)
 		else:
 			print('Regression model...')
 			# loss on last tuple
@@ -185,6 +180,18 @@ def train(modelParams, epochNumber):
 			total_parameters += variable_parameters
 		print('-----total parameters-------- ', total_parameters)
 
+
+		if True:
+			# if True: freeze graph
+			tf.train.write_graph(sess.graph.as_graph_def(), '.' , modelParams['trainLogDir']+'_v/model.pbtxt', as_text=True)
+			# Output nodes
+			output_node_names =[n.name for n in tf.get_default_graph().as_graph_def().node]
+			# Freeze the graph
+			frozen_graph_def = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, output_node_names)
+			# Save the frozen graph
+			with open(modelParams['trainLogDir']+'_v/model.pb', 'wb') as f:
+				f.write(frozen_graph_def.SerializeToString())
+				
 		print('Training     started')
 		durationSum = 0
 		durationSumAll = 0
@@ -197,8 +204,7 @@ def train(modelParams, epochNumber):
 		prevStep = int(modelParams['maxSteps']/2)
 		for step in xrange(epochNumber, modelParams['maxSteps']):
 			startTime = time.time()
-			#_, lossValue = sess.run([opTrain, loss])
-			_, lossValue, l2regValue = sess.run([opTrain, loss, l2reg])
+			_, lossValue = sess.run([opTrain, loss])
 			#print(lossValue, l2regValue)
 			duration = time.time() - startTime
 			durationSum += duration
@@ -209,9 +215,9 @@ def train(modelParams, epochNumber):
 				examplesPerSec = numExamplesPerStep / duration
 				secPerBatch = float(duration)
 				format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
-							  'sec/batch), loss/batch = %.2f, l2reg = %.2f')
+							  'sec/batch), loss/batch = %.2f')
 				logging.info(format_str % (datetime.now(), step, lossValue,
-										   examplesPerSec, secPerBatch, lossValue/modelParams['activeBatchSize'], l2regValue))
+										   examplesPerSec, secPerBatch, lossValue/modelParams['activeBatchSize']))
 
 			if step % FLAGS.summaryWriteStep == 0:
 				summaryStr = sess.run(summaryOp)
@@ -230,48 +236,6 @@ def train(modelParams, epochNumber):
 							datetime.now()
 						)
 					)
-			#if step > prevStep and step % 1000 == 0:
-			##if step % 1000 == 0:
-			#	modelParams['phase'] = 'test'
-			#	modelParams = _set_control_params(modelParams)
-			#	#prevLoss = lossValue
-			#	prevStep = step
-			#	print('     v Function in progress... step ', step)
-			#	lossvsum = 0
-			#	for testStep in range(0, modelParams['testMaxSteps']):
-			#		lossvalsum, pvali, tvali = sess.run([loss, targetP, targetT])
-			#		lossvsum += np.mean(np.array(lossvalsum))
-			#		print(targetP)
-			#		print(targetT)
-			#	pos1 = 0
-			#	neg1 = 0
-			#	for jacc in range(pvali.shape[0]):
-			#		pidx = np.argmax(pvali[jacc])
-			#		tidx = np.argmax(tvali[jacc])
-			#		if tidx == pidx:
-			#			pos1 += 1
-			#		else:
-			#			neg1 += 1
-			#	accur = 100*pos1/(pos1+neg1)
-			#	print("		Accuracy	  = ", accur)            
-			#	print("		Prev Accuracy = ", prevaccur)            
-			#	print('     Average loss  = ', lossvsum/modelParams['testMaxSteps'])
-			#	print('     Prev    loss  = ', prevValiSumLoss/modelParams['testMaxSteps'], '    prevLossStep = ', prevLossStep)
-			#	if accur > prevaccur:
-			#		print('     Saving model')
-			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_v/model.ckpt-'+str(step)+'.data-00000-of-00001' )
-			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_v/model.ckpt-'+str(step)+'.index' )
-			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_v/model.ckpt-'+str(step)+'.meta' )
-			#		prevaccur = accur
-			#		prevValiSumLoss = lossvsum
-			#		prevLossStep = step
-			#	summaryStr = sess.run(summaryOp)
-			#	summaryValiWriter.add_summary(summaryStr, step)
-			#	modelParams['phase'] = 'train'
-			#	modelParams = _set_control_params(modelParams)
-			#if step > prevStep and step-prevStep > 1001:
-			#	print('     ----------------SKIPPED')
-			#	print('     ----------------SKIPPED')
 
 def _setupLogging(logPath):
 	# cleanup

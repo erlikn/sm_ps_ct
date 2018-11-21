@@ -57,7 +57,7 @@ def main(argv=None):
 				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.index', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.index' )
 				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.meta', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.meta' )
 				break
-			time.sleep(30)
+			time.sleep(10)
 			
 		##### uncomment only for testing
 		#fileCheckpoint = Path(modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.data-00000-of-00001')

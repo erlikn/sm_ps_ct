@@ -55,26 +55,28 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     batchSize = kwargs.get('activeBatchSize', None)
 
     ############# CONV1 3x3 conv, 2 input dims, 2 parallel modules, 64 output dims (filters)
-    fireOut1, prevExpandDim, l2reg11 = model_base.conv_fire_module_l2regul('conv11', images, kwargs.get('pngChannels'),
+    fireOut1, prevExpandDim, l2reg1 = model_base.conv_fire_module_l2regul('conv1', images, kwargs.get('pngChannels'),
                                                                   {'cnn3x3': modelShape[0]},
                                                                   wd, stride=[1,2,2,1], **kwargs)
+    #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool1')
     ############## CONV2
     fireOut1, prevExpandDim, l2reg2 = model_base.conv_fire_module_l2regul('conv2', fireOut1, prevExpandDim,
                                                                   {'cnn3x3': modelShape[1]},
                                                                   wd, stride=[1,2,2,1], **kwargs)
-    #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 8, 8, 1], strides=[1, 8, 8, 1], padding='SAME', name='maxpool1')
+    #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 8, 8, 1], strides=[1, 8, 8, 1], padding='SAME', name='maxpool2')
     ############## CONV3
-    fireOut2, prevExpandDim, l2reg31 = model_base.conv_fire_module_l2regul('conv31', fireOut1, prevExpandDim,
+    fireOut1, prevExpandDim, l2reg3 = model_base.conv_fire_module_l2regul('conv3', fireOut1, prevExpandDim,
                                                                   {'cnn3x3': modelShape[2]},
-                                                                  wd, stride=[1,2,2,1], **kwargs)
-    fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool2')
+                                                                  wd, stride=[1,4,4,1], **kwargs)
+    #fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool3')
     ############## CONV4
-    fireOut2, prevExpandDim, l2reg4 = model_base.conv_fire_module_l2regul('conv4', fireOut2, prevExpandDim,
+    fireOut1, prevExpandDim, l2reg4 = model_base.conv_fire_module_l2regul('conv4', fireOut1, prevExpandDim,
                                                                   {'cnn3x3': modelShape[3]},
                                                                   wd, stride=[1,2,2,1], **kwargs)
-    #fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name='maxpool2')
+    #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool4')
     # CONCAT
-    fireOut1 = tf.concat([fireOut1, fireOut2], axis=3)
+    #fireOut1 = tf.concat([fireOut1, fireOut2], axis=3)
+
     prevExpandDim = int(fireOut1.get_shape()[3])
     ###### DROPOUT after CONV8
     with tf.name_scope("drop"):
@@ -87,20 +89,23 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     # [batchsize, 1, 1, prevExpandDim]
     fireOut1 = tf.reshape(fireOut1, [batchSize, prevExpandDim])
     # calc batch norm FC1
-    if kwargs.get('batchNorm'):
-        fireOut1 = model_base.batch_norm('batchnorm9', fireOut1, dtype, kwargs.get('phase'))
-    ############ FC1 layer 
-    #fireOut1, prevExpandDim, l2regfc1 = model_base.fc_fire_module_l2regul('fc2', fireOut1, prevExpandDim,
-    #                                                   {'fc': modelShape[5]},
-    #                                                   wd, **kwargs)
+    #if kwargs.get('batchNorm'):
+    #    fireOut1 = model_base.batch_norm('batchnorm9', fireOut1, dtype, kwargs.get('phase'))
+    ############# FC1 layer with 1024 outputs
+    fireOut1, prevExpandDim, l2reg6 = model_base.fc_fire_module_l2regul('fc2', fireOut1, prevExpandDim,
+                                                       {'fc': modelShape[4]/2},
+                                                       wd, **kwargs)
     ## calc batch norm FC1
     #if kwargs.get('batchNorm'):
     #    fireOut1 = model_base.batch_norm('batchnorm10', fireOut1, dtype, kwargs.get('phase'))
-    ############ FC2 layer with 8 outputs
-    fireOut1, prevExpandDim, l2regfc2 = model_base.fc_regression_module_l2regul('fc3', fireOut1, prevExpandDim,
+    ############# FC2 layer with 8 outputs
+    fireOut1, prevExpandDim, l2reg7 = model_base.fc_regression_module_l2regul('fc3', fireOut1, prevExpandDim,
                                                              {'fc': kwargs.get('networkOutputSize')},
                                                              wd, **kwargs)
-    l2reg = (l2reg11+l2reg2+l2reg31+l2reg4+l2reg5+l2regfc2)/6#(l2reg11+l2reg12+l2reg2+l2reg31+l2reg32+l2reg4+l2reg5+l2reg6)/8
+    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6+l2reg7)/7
+#    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg7)/6
+#    l2reg = (l2reg1+l2reg2+l2reg3+l2reg5+l2reg6)/5
+#    l2reg = (l2reg1+l2reg2+l2reg5+l2reg6)/4
     return fireOut1, l2reg
 
 def loss(pred, target, **kwargs): # batchSize=Sne
