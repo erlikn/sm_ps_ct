@@ -104,7 +104,12 @@ def train(loss, globalStep, **kwargs):
 
     # Generate moving averages of all losses and associated summaries.
     #lossAveragesOp = loss_base.add_loss_summaries(loss, kwargs.get('activeBatchSize', None))
-    
+    tf.add_to_collection('losses', loss)
+    losses = tf.get_collection('losses')
+    for l in losses:
+        tf.summary.scalar('loss_'+l.op.name, l)
+
+
     # Compute gradients.
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) # for batchnorm
     #tvars = tf.trainable_variables()

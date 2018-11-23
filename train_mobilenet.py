@@ -121,7 +121,11 @@ def train(modelParams, epochNumber):
 			print('Regression model...')
 			# loss on last tuple
 			loss = model_cnn.loss(targetP, targetT, **modelParams)
-			
+		
+	    #losses = tf.get_collection('losses')
+    	#for l in losses:
+        #	tf.summary.scalar(l.op.name + '_raw', l)
+
 		# Build a Graph that trains the model with one batch of examples and
 		# updates the model parameters.
 		opTrain = model_cnn.train(loss, globalStep, **modelParams)
