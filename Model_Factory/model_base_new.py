@@ -123,8 +123,8 @@ def batch_norm(name, tensorConv, dtype, phase):
     else:
         training = False
         print('BatchNorm TEST')
-    #return tf.layers.batch_normalization(tensorConv, name=name, training=training)
-    return tensorConv
+    return tf.layers.batch_normalization(tensorConv, name=name, training=training)
+    #return tensorConv
 
 ###############################################################    
 
@@ -776,9 +776,9 @@ def conv_fire_inception_module(name, prevLayerOut, prevLayerDim, fireDims, wd=No
         fireOut, prevExpandDim = conv_fire_module(name+'_inc_3x3_1', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
         fireOut, prevExpandDim = conv_fire_module(name+'_inc_3x3_2', fireOut, prevExpandDim, {'cnn3x3': prevExpandDim}, wd, stride=[1,2,2,1], padding = 'VALID', **kwargs)
         fireOut, prevExpandDim = conv_fire_module(name+'_inc_1x3_3', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
-        fireOut, prevExpandDim = conv_fire_module(name+'_inc_3x1_4', fireOut, prevExpandDim, {'cnn3x1': prevExpandDim}, wd, stride=[1,2,1,1], **kwargs)
-        fireOut, prevExpandDim = conv_fire_module(name+'_inc_1x3_5', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
-        fireOut, prevExpandDim = conv_fire_module(name+'_inc_3x1_6', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
+        fireOut, prevExpandDim = conv_fire_module(name+'_inc_3x1_4', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
+        #fireOut, prevExpandDim = conv_fire_module(name+'_inc_1x3_5', fireOut, prevExpandDim, {'cnn1x3': prevExpandDim}, wd, stride=[1,1,2,1], **kwargs)
+        #fireOut, prevExpandDim = conv_fire_module(name+'_inc_3x1_6', fireOut, prevExpandDim, {'cnn3x1': fireDims.get('cnnFC')}, wd, stride=[1,2,1,1], **kwargs)
 
     if (fireDims.get('cnn1x1')):
         fireOut_1x1, prevExpandDim_1x1 = conv_fire_module(name, prevLayerOut, prevLayerDim, {'cnn1x1': fireDims.get('cnn1x1')}, wd, **kwargs)

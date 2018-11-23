@@ -92,9 +92,9 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     #if kwargs.get('batchNorm'):
     #    fireOut1 = model_base.batch_norm('batchnorm9', fireOut1, dtype, kwargs.get('phase'))
     ############# FC1 layer with 1024 outputs
-    fireOut1, prevExpandDim, l2reg6 = model_base.fc_fire_module_l2regul('fc2', fireOut1, prevExpandDim,
-                                                       {'fc': modelShape[4]/2},
-                                                       wd, **kwargs)
+    #fireOut1, prevExpandDim, l2reg6 = model_base.fc_fire_module_l2regul('fc2', fireOut1, prevExpandDim,
+    #                                                   {'fc': modelShape[4]/2},
+    #                                                   wd, **kwargs)
     ## calc batch norm FC1
     #if kwargs.get('batchNorm'):
     #    fireOut1 = model_base.batch_norm('batchnorm10', fireOut1, dtype, kwargs.get('phase'))

@@ -1,10 +1,10 @@
 #!/bin/sh
 ((i=2000))
 ((k=0))
-while [ $k -lt 21000 ]
+while [ $k -lt 20000 ]
 do
 	((k=i))
 	echo $k
-	python3 evaluator.py 181114c2 $k
+	python3 tevaluator.py 181114rgm $k
 	((i=i+50))
 done

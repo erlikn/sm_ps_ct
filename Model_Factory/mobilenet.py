@@ -57,8 +57,12 @@ def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13
 
     batchSize = kwargs.get('activeBatchSize', None)
     
-    ##### calls mobilnet and returns logits
-    fireOut, _ = model_base.mobilenet(images, num_classes=kwargs.get('networkOutputSize'))
+    ##### calls mobilnet and returns logitsd
+    if kwargs.get('phase') == 'train': 
+        with tf.contrib.slim.arg_scope(model_base.training_scope()):
+            fireOut, _ = model_base.mobilenet(images, num_classes=kwargs.get('networkOutputSize'))
+    else:
+        fireOut, _ = model_base.mobilenet(images, num_classes=kwargs.get('networkOutputSize'))
     return fireOut
 
 

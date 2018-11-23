@@ -220,10 +220,12 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
         batchPngTemp = tf.cast(batchPngTemp, tf.float32)
         # Display the training images in the visualizer.
         for i in range(kwargs.get('pngChannels')):
-            if kwargs.get('pngChannels') > 1:
+            if kwargs.get('pngChannels') == 2:
                 tf.summary.image('tempImg_'+str(i)+'_', tf.split(batchPngTemp, 2, 3)[0])
-            if kwargs.get('pngChannels') == 1:
+            elif kwargs.get('pngChannels') == 1 or kwargs.get('pngChannels') == 3:
                 tf.summary.image('tempImg_'+str(i)+'_', batchPngTemp)
+            else:
+                print('CHECK THE INPUT CHANNELS --- INPUT IS NOT 1c, 2c, nor 3c!!!')
         
         #batchPngTemp = image_preprocessing(batchPngTemp, **kwargs)
         return batchFilename, batchPngTemp, batchTarget

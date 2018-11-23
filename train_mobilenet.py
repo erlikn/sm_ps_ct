@@ -50,7 +50,7 @@ tf.app.flags.DEFINE_integer('printOutStep', 100,
 							"""Number of batches to run.""")
 tf.app.flags.DEFINE_integer('summaryWriteStep', 100,
 							"""Number of batches to run.""")
-tf.app.flags.DEFINE_integer('modelCheckpointStep', 1000,
+tf.app.flags.DEFINE_integer('modelCheckpointStep', 250,
 							"""Number of batches to run.""")
 tf.app.flags.DEFINE_integer('ProgressStepReportStep', 250,
 							"""Number of batches to run.""")
