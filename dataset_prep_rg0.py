@@ -33,7 +33,7 @@ def convertToEightBit(array):#, name):
     low = (array%256)
     blank_image1[:,:,0]=high
     blank_image1[:,:,1]=low
-    blank_image1 = blank_image1[...,::-1]
+    #blank_image1 = blank_image1[...,::-1]
     return blank_image1#, blank_image1
 
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):

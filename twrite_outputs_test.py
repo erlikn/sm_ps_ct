@@ -21,6 +21,7 @@ import time
 import logging
 import json
 import importlib
+from matplotlib import pyplot as plt
 
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
@@ -235,7 +236,7 @@ def train(modelParams, epochNumber):
         
         for step in xrange(0, modelParams['maxSteps']):#(0, 1000):
             startTime = time.time()
-            #npfilename, npTargetP, npTargetT, npPng = sess.run([filename, targetP, targetT, pngTemp])
+            #npfilename, npTargetP, npTargetT, lossValue, l2regValue, npPng = sess.run([filename, targetP, targetT, loss, l2reg, pngTemp])
             npfilename, npTargetP, npTargetT, lossValue, l2regValue = sess.run([filename, targetP, targetT, loss, l2reg])
             duration = time.time() - startTime
             if step != 0:
@@ -246,16 +247,41 @@ def train(modelParams, epochNumber):
             #print(npfilename)
             #print(npTargetT)
             #print(npTargetP)
-            
+            ################# DEMO
+            for ibx in range(modelParams['activeBatchSize']):
+                #print('hello')
+                stat = 'False'
+                if np.argmax(npTargetT[ibx]) == np.argmax(npTargetP[ibx]):
+                    stat = 'True'
+                print(npfilename[ibx].decode('ascii'), 'Target:', np.argmax(npTargetT[ibx]), 'Estimate:', np.argmax(npTargetP[ibx]), stat)
+                npPng = cv2.imread('../Data/cold_wb/testpng352/'+npfilename[ibx].decode('ascii'), -1)
+                #npPng[npPng<24000] = 24000
+                #npPng[npPng>31000] = 31000
+                #hist,bins = np.histogram(npPng.flatten(),9000,[23000,32000])
+                #plt.plot(hist)
+                #plt.show()
+                #npPng.astype('float32')
+                npPng = (npPng-npPng.min())/(npPng.max()-npPng.min())
+                #print(npPng.shape, npPng.min(), npPng.max())
+                #print(npPng.shape, npPng.min(), npPng.max(), npPng.mean())
+                cv2.imshow('npPng', npPng)
+                #print(np.max(npPng[0,:,:,0]), np.max(npPng[0,:,:,1]), np.max(npPng[0,:,:,2]))
+                #print(np.mean(npPng[0,:,:,0]), np.mean(npPng[0,:,:,1]), np.mean(npPng[0,:,:,2]))
+                #p1 = npPng[0,:,:,1]
+                #p2 = npPng[0,:,:,2]
+                #p1 = (p1-np.min(p1)) / (np.max(p1)-np.min(p1))
+                #p2 = (p2-np.min(p2)) / (np.max(p2)-np.min(p2))
+                #cv2.imshow('npPng1', p1)
+                #cv2.imshow('npPng2', p2)
+                cv2.waitKey(0)
+                
+            #################
             #p1 = npPng[0,:,:,0]
             #p2 = npPng[0,:,:,1]
             #p1 = (p1-np.min(p1)) / (np.max(p1)-np.min(p1))
             #p2 = (p2-np.min(p2)) / (np.max(p2)-np.min(p2))
-            #cv2.imshow('img0', p1)
-            #cv2.imshow('img1', p2)
-            #cv2.waitKey(0)
-            #print(npfilename)
-            print(duration, step, modelParams['maxSteps'], 'regul', l2regValue)
+            
+            #print(duration, step, modelParams['maxSteps'], 'regul', l2regValue)
             data_output.output(str(10000+step), npfilename, npTargetP, npTargetT, **modelParams)
             # Print Progress Info
             if ((step % FLAGS.ProgressStepReportStep) == 0) or ((step+1) == modelParams['maxSteps']):

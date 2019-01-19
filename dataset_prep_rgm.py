@@ -33,18 +33,17 @@ def convertToEightBit(array):#, name):
     low = (array%256)
     blank_image1[:,:,0]=high
     blank_image1[:,:,1]=low
-    blank_image1 = blank_image1[...,::-1]
+    #blank_image1 = blank_image1[...,::-1]
     return blank_image1#, blank_image1
 
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):
     ######## No resizing - images are resized after parsing inside data_input.py
     data = cv2.imread(pngFolder+'/'+filenames[i], -1)
-    print(pngFolder, filenames[i])
+    #print(pngFolder, filenames[i])
     data = convertToEightBit(data)
     binData = cv2.resize(cv2.imread(pngFolder+'/../pngBinary/'+filenames[i], -1), (352, 256))
 
     data[:,:,2] = binData.astype(np.int8)
-    
     # Label preparation
     xmins = [] # List of normalized left x coordinates in bounding box (1 per box)
     xmaxs = [] # List of normalized right x coordinates in bounding box
@@ -140,17 +139,17 @@ def _set_folder(folderPath):
 
 def main(_): 
     print('Argument List:', str(sys.argv))
-    trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train2.json')
-    from random import shuffle
-    shuffle(trainFilenames)
-    testFilenames = _read_json_file(sys.argv[1]+'/filenames_test2.json')
+    trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train1.json')
+    testFilenames = _read_json_file(sys.argv[1]+'/filenames_test1.json')
 
-    print("Writing train records...")
-    _set_folder(sys.argv[1]+"/train_tfrecs_rgm_2")
-    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_rgm_2")
+    #print("Writing train records...")
+    #from random import shuffle
+    #shuffle(trainFilenames)
+    #_set_folder(sys.argv[1]+"/train_tfrecs_rgm_1")
+    #create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_rgm_1")
     print("Writing test records...")
-    _set_folder(sys.argv[1]+"/test_tfrecs_rgm_2")
-    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_rgm_2")
+    _set_folder(sys.argv[1]+"/test_tfrecs_rgm_1")
+    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_rgm_1")
 
 
 if __name__ == '__main__':

@@ -30,7 +30,7 @@ import tensorflow as tf
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 #from tensorflow.python.client import device_lib
 #print(device_lib.list_local_devices())
@@ -171,6 +171,7 @@ def train(modelParams, epochNumber):
 		summaryWriter = tf.summary.FileWriter(modelParams['logDir'], sess.graph)
 		summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_v', sess.graph)
 #TEST###        summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_test', sess.graph)
+
 		total_parameters = 0
 		for variable in tf.trainable_variables():
 			# shape is an array of tf.Dimension

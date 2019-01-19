@@ -292,7 +292,7 @@ def loss_l2reg(pred, tval, l2reg, **kwargs):
     """
     lossFunction = kwargs.get('lossFunction')
     if lossFunction == 'clsf_smce_l2reg':
-        return _clsf_smce_l2reg(pred, tval, 0.1, l2reg) #0.01
+        return _clsf_smce_l2reg(pred, tval, 0.2, l2reg) #0.01
     elif lossFunction == 'clsf_ohem_l2reg':
         return _ohem_loss_l2reg(pred, tval, kwargs.get('activeBatchSize'), 0.1, l2reg) #0.01
     elif lossFunction == 'clsf_focal_l2reg':

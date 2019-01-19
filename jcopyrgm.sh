@@ -5,6 +5,6 @@ while [ $k -lt 21000 ]
 do
 	((k=i))
 	echo $k
-	python3 evaluator.py 181114rgm $k
+	python3 evaluator.py 181114rgmS5 $k
 	((i=i+50))
 done
