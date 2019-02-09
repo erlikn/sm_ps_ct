@@ -1,10 +1,10 @@
 #!/bin/sh
-((i=2000))
+((i=10000))
 ((k=0))
-while [ $k -lt 25000 ]
+while [ $k -lt 80001 ]
 do
 	((k=i))
 	echo $k
-	python3 evaluator.py 181121c2 $k
-	((i=i+250))
+	python3 evaluator.py incResNetV2 $k
+	((i=i+500))
 done

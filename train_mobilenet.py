@@ -88,6 +88,7 @@ def _set_control_params(modelParams):
 def train(modelParams, epochNumber):
 	# import corresponding model name as model_cnn, specifed at json file
 	model_cnn = importlib.import_module('Model_Factory.'+modelParams['modelName'])
+	print('activeBatchSize', modelParams['activeBatchSize'])
 	
 	if not os.path.exists(modelParams['dataDir']):
 		raise ValueError("No such data directory %s" % modelParams['dataDir'])
