@@ -76,7 +76,7 @@ def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13
             with tf.contrib.slim.arg_scope([tf.contrib.slim.batch_norm],
                               is_training=False):
                 with tf.variable_scope('InceptionResnetV2',
-                                       reuse=self._reuse_weights) as scope:
+                                       reuse=None) as scope:
                     fireOut, _ = inception_resnet_v2.inception_resnet_v2(
                                     images,
                                     num_classes=kwargs.get('networkOutputSize'),
@@ -127,7 +127,6 @@ def train(loss, globalStep, **kwargs):
     losses = tf.get_collection('losses')
     for l in losses:
         tf.summary.scalar('loss_'+l.op.name, l)
-
 
     # Compute gradients.
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) # for batchnorm

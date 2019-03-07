@@ -12,7 +12,8 @@ import eval_results_b
 import write_outputs_test
 import tensorflow as tf
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 
 def write_json_file(filename, datafile):
@@ -23,6 +24,7 @@ def write_json_file(filename, datafile):
 #############################################
 
 def main(argv=None):
+	phase = 'test'
 	argv = sys.argv
 	if (len(argv)<3):
 		print("Enter 'model name'")
@@ -51,31 +53,47 @@ def main(argv=None):
 			fileCheckpoint = Path(modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.data-00000-of-00001')
 			if fileCheckpoint.is_file():
 				print('		copying...')
-				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.data-00000-of-00001', modelParams['trainLogDir']+'_validation/model.ckpt-'+str(evalStep)+'.data-00000-of-00001' )
-				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.index', modelParams['trainLogDir']+'_validation/model.ckpt-'+str(evalStep)+'.index' )
-				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.meta', modelParams['trainLogDir']+'_validation/model.ckpt-'+str(evalStep)+'.meta' )
+				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.data-00000-of-00001', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.data-00000-of-00001' )
+				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.index', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.index' )
+				shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.meta', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.meta' )
 				break
-			time.sleep(60)
-
-		argv[2] = evalStep
-		print(argv)
-		write_outputs_test.main(argv)
-		acc = eval_results.main(argv[1], 'test')
-		accb = eval_results_b.main(argv[1], 'test')
-		print('----')
-		print('----')
-		print('---- 	curr	', evalStep, ' - ', acc, ' - ', accb )
-		print('---- 	best 	', bestStep, ' - ', bestAcc, ' - ', bestAccb )
-		accdict = {str(evalStep):[acc, accb]}
-		resDict.update(accdict)
-		print('---- 	writing 	', modelName+'.json')		
-		write_json_file(modelName+'.json', resDict)
-		print('----')
-		print('----')
-		if acc > bestAcc:
-			bestAcc = acc
-			bestAccb = accb
-			bestStep = evalStep
+			time.sleep(10)
+			
+		##### uncomment only for testing
+		#fileCheckpoint = Path(modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.data-00000-of-00001')
+		#print('Waiting for 	   ', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep))
+		#while True:
+		#	if fileCheckpoint.is_file():
+		#		break
+		#	time.sleep(30)
+	#
+		#argv[2] = evalStep
+		#print("-------------------- EVALUATION STARTED -----------------")
+		#print(argv)
+		#print("-------------------- ENTER write_outputs --------------")
+		#write_outputs_test.main(argv)
+		#print("-------------------- exit  write_outputs ---------------")
+		#print("-------------------- ENTER eval_results... Calculating accuracy")
+		#acc = eval_results.main(argv[1], phase)
+		#print("-------------------- exit  eval_results... Calculating accuracy")
+		#print("-------------------- ENTER eval_results Binary")
+		#accb = eval_results_b.main(argv[1], phase)
+		#print("-------------------- exit  eval_results Binary")
+		#print('----')
+		#print('----')
+		#print('---- 	curr	', evalStep, ' - ', acc, ' - ', accb )
+		#print('---- 	best 	', bestStep, ' - ', bestAcc, ' - ', bestAccb )
+		#accdict = {str(evalStep):[acc, accb]}
+		#resDict.update(accdict)
+		#print('---- 	writing 	', modelName+'.json')		
+		#write_json_file(modelName+'.json', resDict)
+		#print('----')
+		#print('----')
+		#if acc > bestAcc:
+		#	bestAcc = acc
+		#	bestAccb = accb
+		#	bestStep = evalStep
+		#print("------------- EVALUATION COMPLETED -------------")
 
 #main()
 

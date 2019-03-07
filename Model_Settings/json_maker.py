@@ -12,11 +12,9 @@ def write_json_file(filename, datafile):
 def _set_folders(folderPath):
     if not os.path.exists(folderPath):
         os.makedirs(folderPath)
-
 ####################################################################################
 ####################################################################################
 ####################################################################################
-
 # REGRESSION --- Twin Common Parameters
 #baseTrainDataDir = '../Data/kitti/train_tfrecords'
 #baseTestDataDir = '../Data/kitti/test_tfrecords'
@@ -28,9 +26,6 @@ baseTrainDataDir = '../Data/raw_labeled/train_tfrecs/'
 baseTestDataDir = '../Data/raw_labeled/test_tfrecs/'
 trainLogDirBase = '../Data/logs/clsf_logs/train_logs/'
 testLogDirBase = '../Data/logs/clsf_logs/test_logs/'
-
-
-
 ####################################################################################
 ####################################################################################
 ####################################################################################
@@ -38,7 +33,6 @@ reCompileJSON = True
 ####################################################################################
 ####################################################################################
 ####################################################################################
-
 def write(runName):
     dataLocal = {
         # Data Parameters
@@ -128,9 +122,25 @@ def write(runName):
         dataLocal['classificationModel'] = True
         _181114c2(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     ####
+    elif runName == 'mobilenet_rg0': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _mobilenet_rg0(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == 'mobilenet_rg0_1': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _mobilenet_rg0_1(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
     elif runName == '181114rg0': # using 1800912c2new2 
         dataLocal['classificationModel'] = True
         _181114rg0(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '181114rg0_ohem': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _181114rg0_ohem(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
+    ####
+    elif runName == '181114rg0_deconv': # using 1800912c2new2 
+        dataLocal['classificationModel'] = True
+        _181114rg0_deconv(reCompile, trainLogDirBase, testLogDirBase, runName, dataLocal)
     ####
     elif runName == '181114rgm': # using 1800912c2new2 
         dataLocal['classificationModel'] = True
@@ -156,9 +166,9 @@ def write(runName):
         print("--error: Model name not found!")
         return False
     return True
-    ##############
-    ##############
-    ##############
+####################################################################################
+####################################################################################
+####################################################################################
 def _180911c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
         data['modelName'] = 'cnn_8l2f'
@@ -812,9 +822,8 @@ def _181114rg0(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_1/'
-        data['valiDataDir'] = '../Data/cold_wb/vali_tfrecs_rg0_1/'
-        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_1/'
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f4/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f4/'
 
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
@@ -824,6 +833,248 @@ def _181114rg0(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['weightNorm'] = False
         write_json_file(runName+'.json', data)
 
+def _mobilenet_rg0(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'mobilenet'
+        
+        #data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.0005
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        #data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 3
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f4/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f4/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _mobilenet_rg0_1(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'mobilenet'
+        
+        #data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.0005
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        #data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "_params_classification_softmaxCrossentropy_loss"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 3
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f3/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f3/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+
+def _181114rg0(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_6lf'
+        
+        data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.0005
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "clsf_smce_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 3
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f4/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f4/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _181114rg0_ohem(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_6lf'
+        
+        data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.0005
+        data['learningRateDecayFactor'] = 0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 21020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "clsf_ohem_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 3
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f3/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f3/'
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
+
+def _181114rg0_deconv(reCompile, trainLogDirBase, testLogDirBase, runName, data):
+    if reCompile:
+        data['modelName'] = 'cnn_6lf_deconv'
+        
+        data['dropOutKeepRate'] = 0.5
+        data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
+        data['momentum'] = 0.9
+        data['initialLearningRate'] = 0.001#0.0005
+        data['learningRateDecayFactor'] = 0.5#0.1
+        data['epsilon'] = 0.1
+        
+        #data['modelShape'] = [0   1    2    3    4]
+        data['modelShape'] = [64, 128, 256, 512, 256]
+        data['trainBatchSize'] = 32#16
+        data['testBatchSize'] = 1#16
+        data['numTrainDatasetExamples'] = 91020
+        data['numTestDatasetExamples'] = 131
+        data['logicalOutputSize'] = 6
+        data['outputSize']=6
+        data['num_heatmap']=6
+        data['networkOutputSize'] = data['logicalOutputSize']
+        data['lossFunction'] = "clsf_ohem_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        
+        ######## No resizing - images are resized after parsing inside data_input.py
+        data['pngRows'] = 256
+        data['pngCols'] = 352
+        data['pngChannels'] = 3
+        ## runs
+        data['trainMaxSteps'] = 20010
+        data['numEpochsPerDecay'] = float(data['trainMaxSteps']/3)
+        data['testMaxSteps'] = int(data['numTestDatasetExamples']/data['testBatchSize'])+1
+        
+        data['numValiDatasetExamples'] = 1024
+        data['valiSteps'] = int(data['numValiDatasetExamples']/data['trainBatchSize'])+1
+
+        data['trainLogDir'] = trainLogDirBase + runName
+        data['testLogDir'] = testLogDirBase + runName
+
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_deconv_f2/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_deconv_f2/'
+        print(data['trainDataDir'])
+
+        data['trainOutputDir'] = data['trainLogDir']+'/target/'
+        data['testOutputDir'] = data['testLogDir']+'/target/'
+        _set_folders(data['trainOutputDir'])
+        _set_folders(data['testOutputDir'])
+        data['batchNorm'] = True
+        data['weightNorm'] = False
+        write_json_file(runName+'.json', data)
 
 def _181114rgm(reCompile, trainLogDirBase, testLogDirBase, runName, data):
     if reCompile:
@@ -982,3 +1233,6 @@ def recompile_json_files(runName):
     if success:
         print("JSON files updated")
     return success
+
+def main():
+        recompile_json_files('saddsa')

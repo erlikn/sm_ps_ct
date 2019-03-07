@@ -95,3 +95,46 @@ def write_tfrecords_shard(pngDatalist, filenamelist, numPassLabellist, writeFold
     writer.close()
 
 
+
+
+
+
+def parse_example_heatmap(exampleSerialized, **kwargs):
+    """
+        'temp_v': _float_nparray(pngData),
+        'filename': _bytes_feature(str.encode(filenames[i])),
+        'label': _float_nparray( numPassLabel.tolist()),  
+    """
+    pngRows = 256
+    pngCols = 352
+    num_heatmaps = kwargs['num_heatmap']
+    pngCnls = kwargs.get('pngChannels') # 16bit 2channel
+    labelSize = kwargs.get('logicalOutputSize')
+    featureMap = {
+        'temp_v': tf.FixedLenFeature([pngRows*pngCols*pngCnls], dtype=tf.float32),
+        'filename': tf.FixedLenFeature([], dtype=tf.string),
+        'label': tf.FixedLenFeature([labelSize], dtype=tf.float32),
+        'heatmap': tf.FixedLenFeature([32*44*num_heatmaps], dtype=tf.float32)
+        }
+    features = tf.parse_single_example(exampleSerialized, featureMap)
+    filename = features['filename']
+    pngTemp = _decode_float_image(features['temp_v'],
+                                pngRows,
+                                pngCols,
+                                pngCnls)
+    target = features['label']
+    heatmap = tf.reshape(features['heatmap'], [32, 44, num_heatmaps])
+    return filename, pngTemp, target, heatmap
+
+def write_tfrec_heatmap(pngDatalist, filenamelist, numPassLabellist, heatmap_list, writeFolder, shardname):
+    ######## No resizing - images are resized after parsing inside data_input.py
+    writer = tf.python_io.TFRecordWriter(writeFolder+'/'+shardname+'.tfrecords')
+    for i in range(len(pngDatalist)):
+        tf_example = tf.train.Example(features=tf.train.Features(feature={
+            'temp_v': _float_nparray(pngDatalist[i]),
+            'filename': _bytes_feature(filenamelist[i].encode()),
+            'label': _float_nparray(numPassLabellist[i]),
+            'heatmap': _float_nparray(heatmap_list[i])
+            }))
+        writer.write(tf_example.SerializeToString())
+    writer.close()

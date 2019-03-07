@@ -38,7 +38,19 @@ def convertToEightBit(array):#, name):
 
 def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):
     ######## No resizing - images are resized after parsing inside data_input.py
+    #print(pngFolder+'/'+filenames[i])
     pngData = cv2.imread(pngFolder+'/'+filenames[i], -1)
+    #print(pngData.shape)
+    try:
+        asd = pngData.shape
+    except:
+        print('EXCEPTION   -  ', pngFolder+'/'+filenames[i])
+    
+    if pngData.shape[0]!=256 or pngData.shape[1]!=352:
+        print('WRONG IMAGE SIZE   -  ', pngData.shape, pngFolder+'/'+filenames[i])
+    
+
+
     data = convertToEightBit(pngData)
 
     #print(data.shape)
@@ -140,19 +152,20 @@ def _set_folder(folderPath):
     if not os.path.exists(folderPath):
         os.makedirs(folderPath)
 
-def main(_): 
+def main(_):
+    id_fold = '3'
     print('Argument List:', str(sys.argv))
-    trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train.json')
+    trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train'+id_fold+'.json')
     from random import shuffle
     shuffle(trainFilenames)
-    testFilenames = _read_json_file(sys.argv[1]+'/filenames_test.json')
+    testFilenames = _read_json_file(sys.argv[1]+'/filenames_test'+id_fold+'.json')
 
     print("Writing train records...")
-    _set_folder(sys.argv[1]+"/train_tfrecs_rg0_1")
-    create_tfrecords(sys.argv[1] + "/trainpng352", trainFilenames, sys.argv[1]+"/train_tfrecs_rg0_1")
-    print("Writing test records...")
-    _set_folder(sys.argv[1]+"/test_tfrecs_rg0_1")
-    create_tfrecords(sys.argv[1] + "/testpng352", testFilenames, sys.argv[1]+"/test_tfrecs_rg0_1")
+    _set_folder(sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
+    create_tfrecords(sys.argv[1] + "/trainpngfoldK"+id_fold, trainFilenames, sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
+    #print("Writing test records...")
+    #_set_folder(sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
+    #create_tfrecords(sys.argv[1] + "/testpngfoldK"+id_fold, testFilenames, sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
 
 
 if __name__ == '__main__':

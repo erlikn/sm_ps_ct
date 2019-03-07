@@ -106,6 +106,7 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg7)/6
 #    l2reg = (l2reg1+l2reg2+l2reg3+l2reg5+l2reg6)/5
 #    l2reg = (l2reg1+l2reg2+l2reg5+l2reg6)/4
+
     return fireOut1, l2reg
 
 def loss(pred, target, **kwargs): # batchSize=Sne

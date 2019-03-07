@@ -50,7 +50,7 @@ tf.app.flags.DEFINE_integer('printOutStep', 100,
 							"""Number of batches to run.""")
 tf.app.flags.DEFINE_integer('summaryWriteStep', 100,
 							"""Number of batches to run.""")
-tf.app.flags.DEFINE_integer('modelCheckpointStep', 1000,
+tf.app.flags.DEFINE_integer('modelCheckpointStep', 50,
 							"""Number of batches to run.""")
 tf.app.flags.DEFINE_integer('ProgressStepReportStep', 250,
 							"""Number of batches to run.""")
@@ -102,7 +102,7 @@ def train(modelParams, epochNumber):
 									 trainable=False)
 
 		# Get images inputs for model_cnn.
-		if modelParams['phase'] == 'validation':
+		if modelParams['phase'] == 'v':
 			filename, pngTemp, targetT = data_input.inputs_vali(**modelParams)
 		else:
 			filename, pngTemp, targetT = data_input.inputs(**modelParams)
@@ -111,14 +111,16 @@ def train(modelParams, epochNumber):
 
 		# Build a Graph that computes the HAB predictions from the
 		# inference model
-		targetP = model_cnn.inference(pngTemp, **modelParams)
+		#targetP = model_cnn.inference(pngTemp, **modelParams)
+		targetP, l2reg = model_cnn.inference_l2reg(pngTemp, **modelParams)
 #TEST###        targetPtest = model_cnn.inference(pngTemptest, **modelParams)
 		print(targetP.get_shape())
 		# loss model
 		if modelParams.get('classificationModel'):
 			print('Classification model...')
 			# loss on last tuple
-			loss = model_cnn.loss(targetP, targetT, **modelParams)
+			#loss = model_cnn.loss(targetP, targetT, **modelParams)
+			loss = model_cnn.loss_l2reg(targetP, targetT, l2reg, **modelParams)
 #TEST###            losstest = model_cnn.loss(targetPtest, targetTtest, **modelParams)
 		else:
 			print('Regression model...')
@@ -152,7 +154,7 @@ def train(modelParams, epochNumber):
 		#sess = tf_debug.LocalCLIDebugWrapperSession(sess)
 		#sess.add_tensor_filter("has_inf_or_nan", tf_debug.has_inf_or_nan)
 		sess.run(init)
-		
+
 		# restore a saver.
 		if epochNumber > 0:
 			print('Loading Ex-Model with epoch number %d ...', epochNumber)
@@ -160,14 +162,30 @@ def train(modelParams, epochNumber):
 			#saver.restore(sess, (modelParams['trainLogDir']+'_30k/model.ckpt-29000'))
 			print('Ex-Model     loaded')
 
+		tf.train.write_graph(sess.graph.as_graph_def(), '.' , modelParams['trainLogDir']+'/model.pbtxt', as_text=True)
+		
 		# Start the queue runners.
 		tf.train.start_queue_runners(sess=sess)
 		print('QueueRunner  started')
 		
 		summaryWriter = tf.summary.FileWriter(modelParams['logDir'], sess.graph)
-		summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_validation', sess.graph)
+		summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_v', sess.graph)
 #TEST###        summaryValiWriter = tf.summary.FileWriter(modelParams['logDir']+'_test', sess.graph)
-		
+
+		total_parameters = 0
+		for variable in tf.trainable_variables():
+			# shape is an array of tf.Dimension
+			shape = variable.get_shape()
+			#print(shape)
+			#print(len(shape))
+			variable_parameters = 1
+			for dim in shape:
+				#print(dim)
+				variable_parameters *= dim.value
+				#print(variable_parameters)
+			total_parameters += variable_parameters
+		print('-----total parameters-------- ', total_parameters)
+
 		print('Training     started')
 		durationSum = 0
 		durationSumAll = 0
@@ -180,7 +198,9 @@ def train(modelParams, epochNumber):
 		prevStep = int(modelParams['maxSteps']/2)
 		for step in xrange(epochNumber, modelParams['maxSteps']):
 			startTime = time.time()
-			_, lossValue = sess.run([opTrain, loss])
+			#_, lossValue = sess.run([opTrain, loss])
+			_, lossValue, l2regValue = sess.run([opTrain, loss, l2reg])
+			#print(lossValue, l2regValue)
 			duration = time.time() - startTime
 			durationSum += duration
 			assert not np.isnan(lossValue), 'Model diverged with loss = NaN'
@@ -190,9 +210,9 @@ def train(modelParams, epochNumber):
 				examplesPerSec = numExamplesPerStep / duration
 				secPerBatch = float(duration)
 				format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
-							  'sec/batch), loss/batch = %.2f')
+							  'sec/batch), loss/batch = %.2f, l2reg = %.2f')
 				logging.info(format_str % (datetime.now(), step, lossValue,
-										   examplesPerSec, secPerBatch, lossValue/modelParams['activeBatchSize']))
+										   examplesPerSec, secPerBatch, lossValue/modelParams['activeBatchSize'], l2regValue))
 
 			if step % FLAGS.summaryWriteStep == 0:
 				summaryStr = sess.run(summaryOp)
@@ -217,11 +237,11 @@ def train(modelParams, epochNumber):
 			#	modelParams = _set_control_params(modelParams)
 			#	#prevLoss = lossValue
 			#	prevStep = step
-			#	print('     Validation Function in progress... step ', step)
-			#	lossvalidationsum = 0
+			#	print('     v Function in progress... step ', step)
+			#	lossvsum = 0
 			#	for testStep in range(0, modelParams['testMaxSteps']):
 			#		lossvalsum, pvali, tvali = sess.run([loss, targetP, targetT])
-			#		lossvalidationsum += np.mean(np.array(lossvalsum))
+			#		lossvsum += np.mean(np.array(lossvalsum))
 			#		print(targetP)
 			#		print(targetT)
 			#	pos1 = 0
@@ -236,15 +256,15 @@ def train(modelParams, epochNumber):
 			#	accur = 100*pos1/(pos1+neg1)
 			#	print("		Accuracy	  = ", accur)            
 			#	print("		Prev Accuracy = ", prevaccur)            
-			#	print('     Average loss  = ', lossvalidationsum/modelParams['testMaxSteps'])
+			#	print('     Average loss  = ', lossvsum/modelParams['testMaxSteps'])
 			#	print('     Prev    loss  = ', prevValiSumLoss/modelParams['testMaxSteps'], '    prevLossStep = ', prevLossStep)
 			#	if accur > prevaccur:
 			#		print('     Saving model')
-			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.data-00000-of-00001' )
-			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.index' )
-			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_validation/model.ckpt-'+str(step)+'.meta' )
+			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.data-00000-of-00001', modelParams['logDir']+'_v/model.ckpt-'+str(step)+'.data-00000-of-00001' )
+			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.index', modelParams['logDir']+'_v/model.ckpt-'+str(step)+'.index' )
+			#		shutil.copy( modelParams['logDir']+'/model.ckpt-'+str(step)+'.meta', modelParams['logDir']+'_v/model.ckpt-'+str(step)+'.meta' )
 			#		prevaccur = accur
-			#		prevValiSumLoss = lossvalidationsum
+			#		prevValiSumLoss = lossvsum
 			#		prevLossStep = step
 			#	summaryStr = sess.run(summaryOp)
 			#	summaryValiWriter.add_summary(summaryStr, step)

@@ -1,5 +1,3 @@
-#import write_outputs
-
 import sys
 import json
 import shutil
@@ -14,6 +12,7 @@ import tensorflow as tf
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 
 
 def write_json_file(filename, datafile):

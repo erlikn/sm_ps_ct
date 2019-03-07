@@ -286,7 +286,13 @@ def _clsf_smce_l2reg(targetP, targetT, beta, l2reg):
 def _focal_loss_l2reg(targetP, targetT, beta, l2reg, gamma=0.7): #gamma=0.4
     return tf.add(focal_loss.focal_loss(targetP, targetT, gamma=gamma), beta*l2reg, name="loss_focal_l2reg")
 
-def loss_l2reg(pred, tval, l2reg, **kwargs):
+def _deconv_loss(targetP, targetT):
+    targetT = tf.cast(targetT, tf.float32)
+    targetP = tf.cast(targetP, tf.float32)
+    l2_l2reg_loss = tf.add(tf.reduce_mean(tf.nn.l2_loss(tf.subtract(targetT, targetP))), 0, name="loss_deconv_l2reg")
+    return l2_l2reg_loss
+
+def loss_l2reg(pred, tval, l2reg=0, **kwargs):
     """
     Choose the proper loss function and call it.
     """
@@ -297,3 +303,5 @@ def loss_l2reg(pred, tval, l2reg, **kwargs):
         return _ohem_loss_l2reg(pred, tval, kwargs.get('activeBatchSize'), 0.1, l2reg) #0.01
     elif lossFunction == 'clsf_focal_l2reg':
         return _focal_loss_l2reg(pred, tval, 0.1, l2reg) #0.01
+    elif lossFunction == 'deconv':
+        return _deconv_loss(pred, tval) #0.01

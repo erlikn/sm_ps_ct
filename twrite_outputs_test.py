@@ -62,7 +62,7 @@ tf.app.flags.DEFINE_integer('ProgressStepReportOutputWrite', 250,
 def _set_control_params(modelParams):
     #params['shardMeta'] = model_cnn.getShardsMetaInfo(FLAGS.dataDir, params['phase'])
     modelParams['existingParams'] = None
-
+    #
     if modelParams['phase'] == 'train':
         modelParams['trainBatchSize'] = 1
         modelParams['activeBatchSize'] = modelParams['trainBatchSize']
@@ -71,26 +71,25 @@ def _set_control_params(modelParams):
         modelParams['dataDir'] = modelParams['trainDataDir']
         modelParams['logDir'] = modelParams['trainLogDir']
         modelParams['outputDir'] = modelParams['trainOutputDir']
-    
+    #
     if modelParams['phase'] == 'test':
         modelParams['activeBatchSize'] = modelParams['testBatchSize']
-        
         modelParams['maxSteps'] = modelParams['testMaxSteps']
         modelParams['numExamples'] = modelParams['numTestDatasetExamples']
         modelParams['dataDir'] = modelParams['testDataDir']
         modelParams['logDir'] = modelParams['testLogDir']
         modelParams['outputDir'] = modelParams['testOutputDir']
-        
+        #
         #modelParams['maxSteps'] = 300
         #modelParams['numExamples'] = modelParams['numTestDatasetExamples']
         #modelParams['dataDir'] = modelParams['trainDataDir']
         #modelParams['logDir'] = modelParams['trainLogDir']
         #modelParams['outputDir'] = modelParams['trainOutputDir']
-    
+    #
     shutil.rmtree(modelParams['outputDir'])
     os.mkdir(modelParams['outputDir'])
     print('Target folder created : ', modelParams['outputDir'])
-    
+    #
     #for theFile in os.listdir(modelParams['outputDir']):
     #    filePath = os.path.join(modelParams['outputDir'], theFile)
     #    try:
@@ -101,7 +100,7 @@ def _set_control_params(modelParams):
     #        print('Target folder cleaned : ', modelParams['outputDir'])
     #    except Exception as e:
     #        print(e)
-
+    #
     return modelParams
 ####################################################
 ####################################################
@@ -186,7 +185,7 @@ def train(modelParams, epochNumber):
         print('Ex-Model     loaded')
 
 
-        if True:
+        if False:
             # if True: freeze graph
             tf.train.write_graph(sess.graph.as_graph_def(), '.' , modelParams['trainLogDir']+'_v/model.pbtxt', as_text=True)
             # Output nodes
@@ -254,26 +253,26 @@ def train(modelParams, epochNumber):
                 if np.argmax(npTargetT[ibx]) == np.argmax(npTargetP[ibx]):
                     stat = 'True'
                 print(npfilename[ibx].decode('ascii'), 'Target:', np.argmax(npTargetT[ibx]), 'Estimate:', np.argmax(npTargetP[ibx]), stat)
-                npPng = cv2.imread('../Data/cold_wb/testpng352/'+npfilename[ibx].decode('ascii'), -1)
-                #npPng[npPng<24000] = 24000
-                #npPng[npPng>31000] = 31000
-                #hist,bins = np.histogram(npPng.flatten(),9000,[23000,32000])
-                #plt.plot(hist)
-                #plt.show()
-                #npPng.astype('float32')
-                npPng = (npPng-npPng.min())/(npPng.max()-npPng.min())
-                #print(npPng.shape, npPng.min(), npPng.max())
-                #print(npPng.shape, npPng.min(), npPng.max(), npPng.mean())
-                cv2.imshow('npPng', npPng)
-                #print(np.max(npPng[0,:,:,0]), np.max(npPng[0,:,:,1]), np.max(npPng[0,:,:,2]))
-                #print(np.mean(npPng[0,:,:,0]), np.mean(npPng[0,:,:,1]), np.mean(npPng[0,:,:,2]))
-                #p1 = npPng[0,:,:,1]
-                #p2 = npPng[0,:,:,2]
-                #p1 = (p1-np.min(p1)) / (np.max(p1)-np.min(p1))
-                #p2 = (p2-np.min(p2)) / (np.max(p2)-np.min(p2))
-                #cv2.imshow('npPng1', p1)
-                #cv2.imshow('npPng2', p2)
-                cv2.waitKey(0)
+                # npPng = cv2.imread('../Data/cold_wb/testpng352/'+npfilename[ibx].decode('ascii'), -1)
+                # #npPng[npPng<24000] = 24000
+                # #npPng[npPng>31000] = 31000
+                # #hist,bins = np.histogram(npPng.flatten(),9000,[23000,32000])
+                # #plt.plot(hist)
+                # #plt.show()
+                # #npPng.astype('float32')
+                # npPng = (npPng-npPng.min())/(npPng.max()-npPng.min())
+                # #print(npPng.shape, npPng.min(), npPng.max())
+                # #print(npPng.shape, npPng.min(), npPng.max(), npPng.mean())
+                # cv2.imshow('npPng', npPng)
+                # #print(np.max(npPng[0,:,:,0]), np.max(npPng[0,:,:,1]), np.max(npPng[0,:,:,2]))
+                # #print(np.mean(npPng[0,:,:,0]), np.mean(npPng[0,:,:,1]), np.mean(npPng[0,:,:,2]))
+                # #p1 = npPng[0,:,:,1]
+                # #p2 = npPng[0,:,:,2]
+                # #p1 = (p1-np.min(p1)) / (np.max(p1)-np.min(p1))
+                # #p2 = (p2-np.min(p2)) / (np.max(p2)-np.min(p2))
+                # #cv2.imshow('npPng1', p1)
+                # #cv2.imshow('npPng2', p2)
+                # cv2.waitKey(0)
                 
             #################
             #p1 = npPng[0,:,:,0]

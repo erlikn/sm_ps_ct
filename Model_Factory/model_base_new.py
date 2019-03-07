@@ -1031,12 +1031,12 @@ def fc_regression_module_l2regul(name, prevLayerOut, prevLayerDim, fireDims, wd=
         return fc, fireDims['fc'], l2reg
 
 
-def deconv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=[1, 1, 1, 1], padding='SAME', **kwargs):
+def deconv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=(1, 1), padding='SAME', use_relu=True, **kwargs):
     USE_FP_16 = kwargs.get('usefp16')
     dtype = tf.float16 if USE_FP_16 else tf.float32
-    
+    #
     existingParams = kwargs.get('existingParams')
-    
+    #
     if (fireDims.get('deConv1x1')):
         cnnName = 'deConv1x1'
         kernelSizeR = 1
@@ -1075,22 +1075,41 @@ def deconv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stri
     with tf.variable_scope(name):
         with tf.variable_scope(cnnName) as scope:
             layerName = scope.name.replace("/", "_")
-            stride=(1, 1)
-            padding='valid'
-            deConv = tf.nn.conv2d_transpose(inputs=prevLayerOut, filters=fireDims[cnnName], kernel_size=[kernelSizeR, kernelSizeC],
-                                          strides=stride, padding=padding, activation='relu', name=layerName)
-            
+            stddev = np.sqrt(2/np.prod(prevLayerOut.get_shape().as_list()[1:]))
+            #[height, width, output_channels, in_channels]
+            #fcWeights = _variable_with_weight_decay('weights',
+            #                                        shape=[kernelSizeR, kernelSizeC, fireDims['fc'], prevLayerDim],
+            #                                        initializer=(tf.random_normal_initializer(stddev=stddev) if kwargs.get('phase')=='train'
+            #                                                       else tf.constant_initializer(0.0, dtype=dtype)),
+            #                                        dtype=dtype,
+            #                                        wd=wd,
+            #                                        trainable=kwargs.get('tuneExistingWeights') if (existingParams is not None and 
+            #                                                                               layerName in existingParams) else True)
+            #deConv = tf.nn.conv2d_transpose(value=tf.transpose(prevLayerOut, [0,3,1,2]), 
+            #                                filter=fireDims['fc'], 
+            #                                output_shape=[kernelSizeR, kernelSizeC],
+            #                                strides=stride, padding=padding, name=layerName)
+            if use_relu:
+                activ_func = tf.nn.relu
+            else:
+                activ_func = None
+            deConv = tf.layers.conv2d_transpose(inputs=prevLayerOut, filters=fireDims[cnnName], kernel_size=[kernelSizeR, kernelSizeC],
+                                                strides=stride,
+                                                padding=padding, activation=activ_func, 
+                                                kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                                                name=name)
+
+            #
             if kwargs.get('batchNorm'):
                 deConv = batch_norm('batchnorm', deConv, dtype, kwargs.get('phase'))
-
+            #
         return deConv, fireDims[cnnName]
-        
 
 
 def loss(pred, tval, **kwargs):
     return loss_base.loss(pred, tval, **kwargs)
 
-def loss_l2reg(pred, tval, l2reg, **kwargs):
+def loss_l2reg(pred, tval, l2reg=0, **kwargs):
     return loss_base.loss_l2reg(pred, tval, l2reg, **kwargs)
 
 def train(loss, globalStep, **kwargs):

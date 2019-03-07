@@ -1,0 +1,323 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CHNAGE_TO_TOTAL_FILE_NUMBER	../Data_IO/data_input.py	/^CHNAGE_TO_TOTAL_FILE_NUMBER = 20400$/;"	kind:variable	line:23
+FLAGS	../Data_IO/data_input.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:26
+FLAGS	../dataset_prep.py	/^FLAGS = flags.FLAGS$/;"	kind:variable	line:16
+FLAGS	../dataset_prep_2c.py	/^FLAGS = flags.FLAGS$/;"	kind:variable	line:16
+FLAGS	../test_main.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:48
+FLAGS	../train_main0.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:48
+FLAGS	../train_main1.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:48
+FLAGS	../train_main_bkp.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:48
+FLAGS	../write_outputs.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:47
+FLAGS	../write_outputs_test.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:48
+FLAGS	../write_outputs_test1.py	/^FLAGS = tf.app.flags.FLAGS$/;"	kind:variable	line:48
+NUMBER_OF_SHARDS	../Data_IO/data_input.py	/^NUMBER_OF_SHARDS = (CHNAGE_TO_TOTAL_FILE_NUMBER\/\/TRAIN_SHARD_SIZE)+1 $/;"	kind:variable	line:24
+PASS_THRESHOLD	../eval_results_b.py	/^PASS_THRESHOLD = 2$/;"	kind:variable	line:13
+PHASE	../test_main.py	/^PHASE = 'test'$/;"	kind:variable	line:41
+PHASE	../train_main0.py	/^PHASE = 'train'$/;"	kind:variable	line:41
+PHASE	../train_main1.py	/^PHASE = 'train'$/;"	kind:variable	line:41
+PHASE	../train_main_bkp.py	/^PHASE = 'train'$/;"	kind:variable	line:41
+PHASE	../write_outputs.py	/^PHASE = 'train_test'$/;"	kind:variable	line:40
+PHASE	../write_outputs_test.py	/^PHASE = 'test'$/;"	kind:variable	line:41
+PHASE	../write_outputs_test1.py	/^PHASE = 'test'$/;"	kind:variable	line:41
+TEST_SHARD_SIZE	../Data_IO/data_input.py	/^TEST_SHARD_SIZE = 2*2$/;"	kind:variable	line:21
+TOWER_NAME	../Model_Factory/cnn_10l.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_10l_deconv.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_11l.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_2l2f_new.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_2l2f_new_0813.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_4l2f.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_4l2f_new.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_4l2f_new_incep.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_6l2f_new_0813.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_6l2f_new_0904.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_8l2f.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_8l2f_inception.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/cnn_8l2f_new.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:47
+TOWER_NAME	../Model_Factory/model_base.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:48
+TOWER_NAME	../Model_Factory/model_base_new.py	/^TOWER_NAME = 'tower'$/;"	kind:variable	line:48
+TRAIN_SHARD_SIZE	../Data_IO/data_input.py	/^TRAIN_SHARD_SIZE = 2*2$/;"	kind:variable	line:20
+USE_FP_16	../Model_Factory/cnn_10l.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_10l_deconv.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_11l.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_2l2f_new.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_2l2f_new_0813.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_4l2f.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_4l2f_new.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_4l2f_new_incep.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_6l2f_new_0813.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_6l2f_new_0904.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_8l2f.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_8l2f_inception.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+USE_FP_16	../Model_Factory/cnn_8l2f_new.py	/^USE_FP_16 = False$/;"	kind:variable	line:42
+_180412_clsf_g_smce	../Model_Settings/json_maker.py	/^def _180412_clsf_g_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:195
+_180412_clsf_smce	../Model_Settings/json_maker.py	/^def _180412_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:160
+_180418_clsf_smce	../Model_Settings/json_maker.py	/^def _180418_clsf_smce(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:230
+_180809	../Model_Settings/json_maker.py	/^def _180809(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:266
+_180810	../Model_Settings/json_maker.py	/^def _180810(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:301
+_180814c2	../Model_Settings/json_maker.py	/^def _180814c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:338
+_180911c2	../Model_Settings/json_maker.py	/^def _180911c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:561
+_180912c2	../Model_Settings/json_maker.py	/^def _180912c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:602
+_180912c2new	../Model_Settings/json_maker.py	/^def _180912c2new(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:652
+_180912c2new2	../Model_Settings/json_maker.py	/^def _180912c2new2(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:698
+_180913c2	../Model_Settings/json_maker.py	/^def _180913c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:748
+_180916c2	../Model_Settings/json_maker.py	/^def _180916c2(reCompile, trainLogDirBase, testLogDirBase, runName, data):$/;"	kind:function	line:789
+_activation_summary	../Model_Factory/model_base.py	/^def _activation_summary(x):$/;"	kind:function	line:50
+_activation_summary	../Model_Factory/model_base_new.py	/^def _activation_summary(x):$/;"	kind:function	line:50
+_bytes_feature	../Data_IO/tfrecord_io.py	/^def _bytes_feature(value):$/;"	kind:function	line:19
+_decode_byte_image	../Data_IO/tfrecord_io.py	/^def _decode_byte_image(image, height, width, depth=1):$/;"	kind:function	line:36
+_decode_byte_string	../Data_IO/tfrecord_io.py	/^def _decode_byte_string(filename):$/;"	kind:function	line:26
+_decode_float_image	../Data_IO/tfrecord_io.py	/^def _decode_float_image(image, height, width, depth=1):$/;"	kind:function	line:49
+_float_nparray	../Data_IO/tfrecord_io.py	/^def _float_nparray(value):$/;"	kind:function	line:23
+_focal_loss	../Model_Factory/loss_base.py	/^def _focal_loss(targetP, targetT, gamma=0.2): #gamma=0.4$/;"	kind:function	line:203
+_focal_loss_2	../Model_Factory/loss_base.py	/^def _focal_loss_2(targetP, targetT, gamma=0.7):$/;"	kind:function	line:206
+_get_learning_rate_piecewise_constant	../Model_Factory/optimizer_params.py	/^def _get_learning_rate_piecewise_constant(globalStep, **kwargs):$/;"	kind:function	line:6
+_get_prob_argmax	../eval_results_prob.py	/^def _get_prob_argmax(p):$/;"	kind:function	line:18
+_get_resultDict	../eval_results.py	/^def _get_resultDict(jsonPath):$/;"	kind:function	line:56
+_get_resultDict	../eval_results_b.py	/^def _get_resultDict(jsonPath):$/;"	kind:function	line:37
+_get_resultDict	../eval_results_prob.py	/^def _get_resultDict(jsonPath):$/;"	kind:function	line:42
+_get_resultDict	../eval_results_top1.py	/^def _get_resultDict(jsonPath):$/;"	kind:function	line:35
+_int64_array	../Data_IO/tfrecord_io.py	/^def _int64_array(value):$/;"	kind:function	line:16
+_int64_feature	../Data_IO/tfrecord_io.py	/^def _int64_feature(value):$/;"	kind:function	line:13
+_l2_loss	../Model_Factory/loss_base.py	/^def _l2_loss(pred, tval): # batchSize=Sne$/;"	kind:function	line:36
+_ohem_loss	../Model_Factory/loss_base.py	/^def _ohem_loss(cls_prob, label, batchSize):$/;"	kind:function	line:209
+_params_classification_gaussian_softmaxCrossentropy_loss_nTuple	../Model_Factory/loss_base.py	/^def _params_classification_gaussian_softmaxCrossentropy_loss_nTuple(targetP, targetT, nTuple, activeBatchSize):$/;"	kind:function	line:162
+_params_classification_l2_loss_nTuple	../Model_Factory/loss_base.py	/^def _params_classification_l2_loss_nTuple(targetP, targetT, nTuple, activeBatchSize):$/;"	kind:function	line:124
+_params_classification_softmaxCrossentropy_loss_nTuple	../Model_Factory/loss_base.py	/^def _params_classification_softmaxCrossentropy_loss_nTuple(targetP, targetT, nTuple, activeBatchSize):$/;"	kind:function	line:142
+_read_json_file	../Data_IO/data_output.py	/^def _read_json_file(filepath):$/;"	kind:function	line:34
+_read_json_file	../dataset_prep.py	/^def _read_json_file(filename):$/;"	kind:function	line:26
+_read_json_file	../dataset_prep_2c.py	/^def _read_json_file(filename):$/;"	kind:function	line:26
+_read_json_file	../eval_results.py	/^def _read_json_file(filepath):$/;"	kind:function	line:13
+_read_json_file	../eval_results_b.py	/^def _read_json_file(filepath):$/;"	kind:function	line:15
+_read_json_file	../eval_results_prob.py	/^def _read_json_file(filepath):$/;"	kind:function	line:13
+_read_json_file	../eval_results_top1.py	/^def _read_json_file(filepath):$/;"	kind:function	line:13
+_set_control_params	../test_main.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:61
+_set_control_params	../train_main0.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:61
+_set_control_params	../train_main1.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:61
+_set_control_params	../train_main_bkp.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:61
+_set_control_params	../write_outputs.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:60
+_set_control_params	../write_outputs_test.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:61
+_set_control_params	../write_outputs_test1.py	/^def _set_control_params(modelParams):$/;"	kind:function	line:61
+_set_folder	../dataset_prep.py	/^def _set_folder(folderPath):$/;"	kind:function	line:116
+_set_folder	../dataset_prep_2c.py	/^def _set_folder(folderPath):$/;"	kind:function	line:140
+_set_folders	../Model_Settings/json_maker.py	/^def _set_folders(folderPath):$/;"	kind:function	line:12
+_setupLogging	../test_main.py	/^def _setupLogging(logPath):$/;"	kind:function	line:205
+_setupLogging	../train_main0.py	/^def _setupLogging(logPath):$/;"	kind:function	line:257
+_setupLogging	../train_main1.py	/^def _setupLogging(logPath):$/;"	kind:function	line:257
+_setupLogging	../train_main_bkp.py	/^def _setupLogging(logPath):$/;"	kind:function	line:268
+_setupLogging	../write_outputs.py	/^def _setupLogging(logPath):$/;"	kind:function	line:160
+_setupLogging	../write_outputs_test.py	/^def _setupLogging(logPath):$/;"	kind:function	line:204
+_setupLogging	../write_outputs_test1.py	/^def _setupLogging(logPath):$/;"	kind:function	line:184
+_transformation_loss_nTuple_last	../Model_Factory/loss_base.py	/^def _transformation_loss_nTuple_last(targetP, targetT, activeBatchSize):$/;"	kind:function	line:183
+_variable_on_cpu	../Model_Factory/model_base.py	/^def _variable_on_cpu(name, shape, initializer, dtype):$/;"	kind:function	line:68
+_variable_on_cpu	../Model_Factory/model_base_new.py	/^def _variable_on_cpu(name, shape, initializer, dtype):$/;"	kind:function	line:68
+_variable_with_weight_decay	../Model_Factory/model_base.py	/^def _variable_with_weight_decay(name, shape, initializer, dtype, wd, trainable=True):$/;"	kind:function	line:84
+_variable_with_weight_decay	../Model_Factory/model_base_new.py	/^def _variable_with_weight_decay(name, shape, initializer, dtype, wd, trainable=True):$/;"	kind:function	line:84
+_weighted_L2_loss	../Model_Factory/loss_base.py	/^def _weighted_L2_loss(tMatP, tMatT, activeBatchSize):$/;"	kind:function	line:76
+_weighted_params_L2_loss	../Model_Factory/loss_base.py	/^def _weighted_params_L2_loss(targetP, targetT, activeBatchSize):$/;"	kind:function	line:83
+_weighted_params_L2_loss_nTuple_all	../Model_Factory/loss_base.py	/^def _weighted_params_L2_loss_nTuple_all(targetP, targetT, nTuple, activeBatchSize):$/;"	kind:function	line:110
+_weighted_params_L2_loss_nTuple_last	../Model_Factory/loss_base.py	/^def _weighted_params_L2_loss_nTuple_last(targetP, targetT, nTuple, activeBatchSize):$/;"	kind:function	line:97
+_write_json_file	../Data_IO/data_output.py	/^def _write_json_file(filepath, datafile):$/;"	kind:function	line:30
+add_loss_summaries	../Model_Factory/loss_base.py	/^def add_loss_summaries(total_loss, batchSize):$/;"	kind:function	line:8
+baseTestDataDir	../Model_Settings/json_maker.py	/^baseTestDataDir = '..\/Data\/raw_labeled\/test_tfrecs\/'$/;"	kind:variable	line:28
+baseTrainDataDir	../Model_Settings/json_maker.py	/^baseTrainDataDir = '..\/Data\/raw_labeled\/train_tfrecs\/'$/;"	kind:variable	line:27
+batch_norm	../Model_Factory/model_base.py	/^def batch_norm(name, tensorConv, dtype):$/;"	kind:function	line:113
+batch_norm	../Model_Factory/model_base_new.py	/^def batch_norm(name, tensorConv, dtype, phase):$/;"	kind:function	line:122
+cnn_10l.py	../Model_Factory/cnn_10l.py	1;"	kind:file	line:1
+cnn_10l_deconv.py	../Model_Factory/cnn_10l_deconv.py	1;"	kind:file	line:1
+cnn_11l.py	../Model_Factory/cnn_11l.py	1;"	kind:file	line:1
+cnn_2l2f_new.py	../Model_Factory/cnn_2l2f_new.py	1;"	kind:file	line:1
+cnn_2l2f_new_0813.py	../Model_Factory/cnn_2l2f_new_0813.py	1;"	kind:file	line:1
+cnn_4l2f.py	../Model_Factory/cnn_4l2f.py	1;"	kind:file	line:1
+cnn_4l2f_new.py	../Model_Factory/cnn_4l2f_new.py	1;"	kind:file	line:1
+cnn_4l2f_new_incep.py	../Model_Factory/cnn_4l2f_new_incep.py	1;"	kind:file	line:1
+cnn_6l2f_new_0813.py	../Model_Factory/cnn_6l2f_new_0813.py	1;"	kind:file	line:1
+cnn_6l2f_new_0904.py	../Model_Factory/cnn_6l2f_new_0904.py	1;"	kind:file	line:1
+cnn_8l2f.py	../Model_Factory/cnn_8l2f.py	1;"	kind:file	line:1
+cnn_8l2f_inception.py	../Model_Factory/cnn_8l2f_inception.py	1;"	kind:file	line:1
+cnn_8l2f_new.py	../Model_Factory/cnn_8l2f_new.py	1;"	kind:file	line:1
+conv_fire_inception_module	../Model_Factory/model_base.py	/^def conv_fire_inception_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:549
+conv_fire_inception_module	../Model_Factory/model_base_new.py	/^def conv_fire_inception_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:696
+conv_fire_module	../Model_Factory/model_base.py	/^def conv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:485
+conv_fire_module	../Model_Factory/model_base_new.py	/^def conv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=[1, 1, 1, 1], padding='SAME', **kwargs):$/;"	kind:function	line:511
+conv_fire_module_sep	../Model_Factory/model_base_new.py	/^def conv_fire_module_sep(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:606
+conv_fire_parallel_inception_module	../Model_Factory/model_base.py	/^def conv_fire_parallel_inception_module(name, prevLayerOut, prevLayerDim, fireDimsSingleModule, wd=None, **kwargs):$/;"	kind:function	line:398
+conv_fire_parallel_inception_module	../Model_Factory/model_base_new.py	/^def conv_fire_parallel_inception_module(name, prevLayerOut, prevLayerDim, fireDimsSingleModule, wd=None, **kwargs):$/;"	kind:function	line:420
+conv_fire_parallel_module	../Model_Factory/model_base.py	/^def conv_fire_parallel_module(name, prevLayerOut, prevLayerDim, fireDimsSingleModule, wd=None, **kwargs):$/;"	kind:function	line:312
+conv_fire_parallel_module	../Model_Factory/model_base_new.py	/^def conv_fire_parallel_module(name, prevLayerOut, prevLayerDim, fireDimsSingleModule, wd=None, **kwargs):$/;"	kind:function	line:330
+conv_fire_parallel_residual_module	../Model_Factory/model_base.py	/^def conv_fire_parallel_residual_module(name, prevLayerOut, prevLayerDim, historicLayerOut, historicLayerDim, fireDimsSingleModule, wd=None, **kwargs):$/;"	kind:function	line:210
+conv_fire_parallel_residual_module	../Model_Factory/model_base_new.py	/^def conv_fire_parallel_residual_module(name, prevLayerOut, prevLayerDim, historicLayerOut, historicLayerDim, fireDimsSingleModule, wd=None, **kwargs):$/;"	kind:function	line:228
+conv_fire_residual_module	../Model_Factory/model_base.py	/^def conv_fire_residual_module(name, prevLayerOut, prevLayerDim, historicLayerOut, historicLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:420
+conv_fire_residual_module	../Model_Factory/model_base_new.py	/^def conv_fire_residual_module(name, prevLayerOut, prevLayerDim, historicLayerOut, historicLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:442
+create_tfrecords	../dataset_prep.py	/^def create_tfrecords(pngFolder, filenames, writeFolder):$/;"	kind:function	line:93
+create_tfrecords	../dataset_prep_2c.py	/^def create_tfrecords(pngFolder, filenames, writeFolder):$/;"	kind:function	line:105
+data_input.py	../Data_IO/data_input.py	1;"	kind:file	line:1
+data_output.py	../Data_IO/data_output.py	1;"	kind:file	line:1
+dataset_prep.py	../dataset_prep.py	1;"	kind:file	line:1
+dataset_prep_2c.py	../dataset_prep_2c.py	1;"	kind:file	line:1
+deconv_fire_module	../Model_Factory/model_base_new.py	/^def deconv_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, stride=[1, 1, 1, 1], padding='SAME', **kwargs):$/;"	kind:function	line:836
+eval_results.py	../eval_results.py	1;"	kind:file	line:1
+eval_results_b.py	../eval_results_b.py	1;"	kind:file	line:1
+eval_results_prob.py	../eval_results_prob.py	1;"	kind:file	line:1
+eval_results_top1.py	../eval_results_top1.py	1;"	kind:file	line:1
+evaluate	../eval_results.py	/^def evaluate(resDict):$/;"	kind:function	line:17
+evaluate	../eval_results_b.py	/^def evaluate(resDict):$/;"	kind:function	line:19
+evaluate	../eval_results_prob.py	/^def evaluate(resDict):$/;"	kind:function	line:24
+evaluate	../eval_results_top1.py	/^def evaluate(resDict):$/;"	kind:function	line:17
+evaluator.py	../evaluator.py	1;"	kind:file	line:1
+evaluator1.py	../evaluator1.py	1;"	kind:file	line:1
+evaluator_sep.py	../evaluator_sep.py	1;"	kind:file	line:1
+fc_fire_LSTM_module	../Model_Factory/model_base.py	/^def fc_fire_LSTM_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:595
+fc_fire_LSTM_module	../Model_Factory/model_base_new.py	/^def fc_fire_LSTM_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:772
+fc_fire_module	../Model_Factory/model_base.py	/^def fc_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:563
+fc_fire_module	../Model_Factory/model_base_new.py	/^def fc_fire_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:739
+fc_regression_module	../Model_Factory/model_base.py	/^def fc_regression_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:627
+fc_regression_module	../Model_Factory/model_base_new.py	/^def fc_regression_module(name, prevLayerOut, prevLayerDim, fireDims, wd=None, **kwargs):$/;"	kind:function	line:804
+fetch_inputs	../Data_IO/data_input.py	/^def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):$/;"	kind:function	line:118
+flags	../dataset_prep.py	/^flags = tf.app.flags$/;"	kind:variable	line:14
+flags	../dataset_prep_2c.py	/^flags = tf.app.flags$/;"	kind:variable	line:14
+focal_loss	../Model_Factory/focal_loss.py	/^def focal_loss(prediction_tensor, target_tensor, weights=None, alpha=0.25, gamma=2):$/;"	kind:function	line:4
+focal_loss.py	../Model_Factory/focal_loss.py	1;"	kind:file	line:1
+get_adagrad_optimizer_params	../Model_Factory/optimizer_params.py	/^def get_adagrad_optimizer_params(globalStep, **kwargs):$/;"	kind:function	line:35
+get_adam_optimizer_params	../Model_Factory/optimizer_params.py	/^def get_adam_optimizer_params(globalStep, **kwargs):$/;"	kind:function	line:26
+get_gradient_descent_optimizer_params	../Model_Factory/optimizer_params.py	/^def get_gradient_descent_optimizer_params(globalStep, **kwargs):$/;"	kind:function	line:31
+get_momentum_optimizer_params	../Model_Factory/optimizer_params.py	/^def get_momentum_optimizer_params(globalStep, **kwargs):$/;"	kind:function	line:21
+image_preprocessing	../Data_IO/data_input.py	/^def image_preprocessing(image, **kwargs):$/;"	kind:function	line:85
+inference	../Model_Factory/cnn_10l.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_10l_deconv.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_11l.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_2l2f_new.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_2l2f_new_0813.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_4l2f.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_4l2f_new.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_4l2f_new_incep.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_6l2f_new_0813.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_6l2f_new_0904.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_8l2f.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_8l2f_inception.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inference	../Model_Factory/cnn_8l2f_new.py	/^def inference(images, **kwargs): #batchSize=None, phase='train', outLayer=[13,13], existingParams=[]$/;"	kind:function	line:49
+inputs	../Data_IO/data_input.py	/^def inputs(**kwargs):$/;"	kind:function	line:228
+inputs_vali	../Data_IO/data_input.py	/^def inputs_vali(**kwargs):$/;"	kind:function	line:248
+json_maker.py	../Model_Settings/json_maker.py	1;"	kind:file	line:1
+listData	../dataset_prep.py	/^listData = list()$/;"	kind:variable	line:20
+listData	../dataset_prep_2c.py	/^listData = list()$/;"	kind:variable	line:20
+listFlname	../dataset_prep.py	/^listFlname = list()$/;"	kind:variable	line:21
+listFlname	../dataset_prep_2c.py	/^listFlname = list()$/;"	kind:variable	line:21
+listNumPassLabel	../dataset_prep.py	/^listNumPassLabel = list()$/;"	kind:variable	line:22
+listNumPassLabel	../dataset_prep_2c.py	/^listNumPassLabel = list()$/;"	kind:variable	line:22
+loss	../Model_Factory/cnn_10l.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:191
+loss	../Model_Factory/cnn_10l_deconv.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:198
+loss	../Model_Factory/cnn_11l.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:231
+loss	../Model_Factory/cnn_2l2f_new.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:139
+loss	../Model_Factory/cnn_2l2f_new_0813.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:160
+loss	../Model_Factory/cnn_4l2f.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:136
+loss	../Model_Factory/cnn_4l2f_new.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:136
+loss	../Model_Factory/cnn_4l2f_new_incep.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:140
+loss	../Model_Factory/cnn_6l2f_new_0813.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:160
+loss	../Model_Factory/cnn_6l2f_new_0904.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:160
+loss	../Model_Factory/cnn_8l2f.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:197
+loss	../Model_Factory/cnn_8l2f_inception.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:166
+loss	../Model_Factory/cnn_8l2f_new.py	/^def loss(pred, target, **kwargs): # batchSize=Sne$/;"	kind:function	line:128
+loss	../Model_Factory/loss_base.py	/^def loss(pred, tval, **kwargs):$/;"	kind:function	line:218
+loss	../Model_Factory/model_base.py	/^def loss(pred, tval, **kwargs):$/;"	kind:function	line:659
+loss	../Model_Factory/model_base_new.py	/^def loss(pred, tval, **kwargs):$/;"	kind:function	line:894
+loss_base.py	../Model_Factory/loss_base.py	1;"	kind:file	line:1
+main	../dataset_prep.py	/^def main(_): $/;"	kind:function	line:120
+main	../dataset_prep_2c.py	/^def main(_): $/;"	kind:function	line:144
+main	../eval_results.py	/^def main(modelName, phase):$/;"	kind:function	line:64
+main	../eval_results_b.py	/^def main(modelName, phase):$/;"	kind:function	line:45
+main	../eval_results_prob.py	/^def main(modelName, phase):$/;"	kind:function	line:50
+main	../eval_results_top1.py	/^def main(modelName, phase):$/;"	kind:function	line:43
+main	../evaluator.py	/^def main(argv=None):$/;"	kind:function	line:26
+main	../evaluator1.py	/^def main(argv=None):$/;"	kind:function	line:25
+main	../evaluator_sep.py	/^def main(argv=None):$/;"	kind:function	line:64
+main	../test_main.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:226
+main	../train_main0.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:278
+main	../train_main1.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:278
+main	../train_main_bkp.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:289
+main	../write_outputs.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:181
+main	../write_outputs_test.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:225
+main	../write_outputs_test1.py	/^def main(argv=None):  # pylint: disable=unused-argumDt$/;"	kind:function	line:205
+modelName	../eval_results.py	/^    modelName = sys.argv[1]$/;"	kind:variable	line:90
+modelName	../eval_results_b.py	/^    modelName = sys.argv[1]$/;"	kind:variable	line:70
+modelName	../eval_results_prob.py	/^    modelName = sys.argv[1]$/;"	kind:variable	line:75
+modelName	../eval_results_top1.py	/^    modelName = sys.argv[1]$/;"	kind:variable	line:68
+model_base.py	../Model_Factory/model_base.py	1;"	kind:file	line:1
+model_base_new.py	../Model_Factory/model_base_new.py	1;"	kind:file	line:1
+optimizer_params.py	../Model_Factory/optimizer_params.py	1;"	kind:file	line:1
+output	../Data_IO/data_output.py	/^def output(filename, npFilename, npTargetP, npTargetT, **kwargs):$/;"	kind:function	line:20
+parse_example_proto	../Data_IO/tfrecord_io.py	/^def parse_example_proto(exampleSerialized, **kwargs):$/;"	kind:function	line:61
+phase	../eval_results.py	/^    phase = sys.argv[2]$/;"	kind:variable	line:91
+phase	../eval_results_b.py	/^    phase = sys.argv[2]$/;"	kind:variable	line:71
+phase	../eval_results_prob.py	/^    phase = sys.argv[2]$/;"	kind:variable	line:76
+phase	../eval_results_top1.py	/^    phase = sys.argv[2]$/;"	kind:variable	line:69
+reCompileJSON	../Model_Settings/json_maker.py	/^reCompileJSON = True$/;"	kind:variable	line:37
+recompile_json_files	../Model_Settings/json_maker.py	/^def recompile_json_files(runName):$/;"	kind:function	line:833
+samplesinshard	../dataset_prep.py	/^samplesinshard = 512$/;"	kind:variable	line:19
+samplesinshard	../dataset_prep_2c.py	/^samplesinshard = 512$/;"	kind:variable	line:19
+shardNumber	../dataset_prep.py	/^shardNumber = 0$/;"	kind:variable	line:18
+shardNumber	../dataset_prep_2c.py	/^shardNumber = 0$/;"	kind:variable	line:18
+test	../Model_Factory/cnn_10l.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:206
+test	../Model_Factory/cnn_10l_deconv.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:213
+test	../Model_Factory/cnn_11l.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:246
+test	../Model_Factory/cnn_2l2f_new.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:154
+test	../Model_Factory/cnn_2l2f_new_0813.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:175
+test	../Model_Factory/cnn_4l2f.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:151
+test	../Model_Factory/cnn_4l2f_new.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:151
+test	../Model_Factory/cnn_4l2f_new_incep.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:155
+test	../Model_Factory/cnn_6l2f_new_0813.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:175
+test	../Model_Factory/cnn_6l2f_new_0904.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:175
+test	../Model_Factory/cnn_8l2f.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:212
+test	../Model_Factory/cnn_8l2f_inception.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:181
+test	../Model_Factory/cnn_8l2f_new.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:143
+test	../Model_Factory/model_base.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:704
+test	../Model_Factory/model_base_new.py	/^def test(loss, globalStep, **kwargs):$/;"	kind:function	line:943
+testLogDirBase	../Model_Settings/json_maker.py	/^testLogDirBase = '..\/Data\/logs\/clsf_logs\/test_logs\/'$/;"	kind:variable	line:30
+test_main.py	../test_main.py	1;"	kind:file	line:1
+tfrecord_io.py	../Data_IO/tfrecord_io.py	1;"	kind:file	line:1
+train	../Model_Factory/cnn_10l.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:203
+train	../Model_Factory/cnn_10l_deconv.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:210
+train	../Model_Factory/cnn_11l.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:243
+train	../Model_Factory/cnn_2l2f_new.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:151
+train	../Model_Factory/cnn_2l2f_new_0813.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:172
+train	../Model_Factory/cnn_4l2f.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:148
+train	../Model_Factory/cnn_4l2f_new.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:148
+train	../Model_Factory/cnn_4l2f_new_incep.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:152
+train	../Model_Factory/cnn_6l2f_new_0813.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:172
+train	../Model_Factory/cnn_6l2f_new_0904.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:172
+train	../Model_Factory/cnn_8l2f.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:209
+train	../Model_Factory/cnn_8l2f_inception.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:178
+train	../Model_Factory/cnn_8l2f_new.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:140
+train	../Model_Factory/model_base.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:662
+train	../Model_Factory/model_base_new.py	/^def train(loss, globalStep, **kwargs):$/;"	kind:function	line:897
+train	../test_main.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:89
+train	../train_main0.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:88
+train	../train_main1.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:88
+train	../train_main_bkp.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:89
+train	../write_outputs.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:88
+train	../write_outputs_test.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:100
+train	../write_outputs_test1.py	/^def train(modelParams, epochNumber):$/;"	kind:function	line:88
+trainLogDirBase	../Model_Settings/json_maker.py	/^trainLogDirBase = '..\/Data\/logs\/clsf_logs\/train_logs\/'$/;"	kind:variable	line:29
+train_main0.py	../train_main0.py	1;"	kind:file	line:1
+train_main1.py	../train_main1.py	1;"	kind:file	line:1
+train_main_bkp.py	../train_main_bkp.py	1;"	kind:file	line:1
+twin_correlation	../Model_Factory/model_base.py	/^def twin_correlation(name, prevLayerOut, prevLayerDim, d, s2, **kwargs):$/;"	kind:function	line:128
+twin_correlation	../Model_Factory/model_base_new.py	/^def twin_correlation(name, prevLayerOut, prevLayerDim, d, s2, **kwargs):$/;"	kind:function	line:146
+twin_correlation_simple	../Model_Factory/model_base.py	/^def twin_correlation_simple(name, prevLayerOut, prevLayerDim, **kwargs):$/;"	kind:function	line:190
+twin_correlation_simple	../Model_Factory/model_base_new.py	/^def twin_correlation_simple(name, prevLayerOut, prevLayerDim, **kwargs):$/;"	kind:function	line:208
+validate_for_nan	../Data_IO/data_input.py	/^def validate_for_nan(tensorT):$/;"	kind:function	line:75
+write	../Model_Settings/json_maker.py	/^def write(runName):$/;"	kind:function	line:42
+write_json_file	../Model_Settings/json_maker.py	/^def write_json_file(filename, datafile):$/;"	kind:function	line:6
+write_json_file	../evaluator.py	/^def write_json_file(filename, datafile):$/;"	kind:function	line:19
+write_json_file	../evaluator1.py	/^def write_json_file(filename, datafile):$/;"	kind:function	line:18
+write_json_file	../evaluator_sep.py	/^def write_json_file(filename, datafile):$/;"	kind:function	line:11
+write_outputs.py	../write_outputs.py	1;"	kind:file	line:1
+write_outputs_test.py	../write_outputs_test.py	1;"	kind:file	line:1
+write_outputs_test1.py	../write_outputs_test1.py	1;"	kind:file	line:1
+write_tfrecord	../dataset_prep.py	/^def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):$/;"	kind:function	line:29
+write_tfrecord	../dataset_prep_2c.py	/^def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i):$/;"	kind:function	line:29
+write_tfrecords_shard	../Data_IO/tfrecord_io.py	/^def write_tfrecords_shard(pngDatalist, filenamelist, numPassLabellist, writeFolder, shardname):$/;"	kind:function	line:85
