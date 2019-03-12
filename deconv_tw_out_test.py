@@ -230,8 +230,8 @@ def train(modelParams, epochNumber):
             #npfilename = np_inp['filename']
             #npTargetP = np_out['clsf']
             #npTargetT = np_inp['clsf']
-            npfilename, npTargetT, npTargetP = sess.run([input_data['filename'], input_data['clsf'], output_res['clsf']])
-            #npfilename, npTargetT, npTargetP, npImageP = sess.run([input_data['filename'], input_data['clsf'], output_res['clsf'], output_res['deconv']])
+            #npfilename, npTargetT, npTargetP = sess.run([input_data['filename'], input_data['clsf'], output_res['clsf']])
+            npfilename, npTargetT, npTargetP, npImageP = sess.run([input_data['filename'], input_data['clsf'], output_res['clsf'], output_res['deconv']])
             #print(modelParams['outputDir']+str(step+10000)+'.jpg')
             # 1-mask imwrite
             #cv2.imwrite(modelParams['outputDir']+str(step+10000)+'.jpg', npImageP[0,:,:,0])

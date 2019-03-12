@@ -31,7 +31,7 @@ import tensorflow as tf
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 #from tensorflow.python.client import device_lib
 #print(device_lib.list_local_devices())
@@ -112,8 +112,9 @@ def train(modelParams, epochNumber):
 		# inference model
 		#targetP = model_cnn.inference(pngTemp, **modelParams)
 		output_res = model_cnn.inference_l2reg(input_data['image'], **modelParams)
-		for hmaps in range(modelParams['num_heatmap']):
-			tf.summary.image('outImg', tf.split(output_res['deconv'], 6, 3)[hmaps])
+		#for hmaps in range(modelParams['num_heatmap']):
+    	#	tf.summary.image('outImg', tf.split(output_res['deconv'], 6, 3)[hmaps])
+		tf.summary.image('outImg', output_res['deconv'])
 #TEST###        targetPtest = model_cnn.inference(pngTemptest, **modelParams)
 		# loss model
 		loss = model_cnn.loss_l2reg(output_res, input_data, **modelParams)

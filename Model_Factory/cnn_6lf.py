@@ -53,7 +53,7 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     dtype = tf.float16 if USE_FP_16 else tf.float32
 
     batchSize = kwargs.get('activeBatchSize', None)
-
+    print(images)
     ############# CONV1 3x3 conv, 2 input dims, 2 parallel modules, 64 output dims (filters)
     fireOut1, prevExpandDim, l2reg1 = model_base.conv_fire_module_l2regul('conv1', images, kwargs.get('pngChannels'),
                                                                   {'cnn3x3': modelShape[0]},
@@ -102,6 +102,7 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     fireOut1, prevExpandDim, l2reg7 = model_base.fc_regression_module_l2regul('fc3', fireOut1, prevExpandDim,
                                                              {'fc': kwargs.get('networkOutputSize')},
                                                              wd, **kwargs)
+    print(fireOut1)
 #    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6+l2reg7)/7
     l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg7)/6
 #    l2reg = (l2reg1+l2reg2+l2reg3+l2reg5+l2reg6)/5

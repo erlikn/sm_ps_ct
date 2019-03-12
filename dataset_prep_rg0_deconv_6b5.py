@@ -18,6 +18,7 @@ listData = list()
 listFlname = list()
 listNumPassLabel = list()
 list_heatmap = list()
+list_bbox = list()
 
 np.set_printoptions(precision=2, suppress=True)
 
@@ -101,6 +102,7 @@ def add_gaussian(heat_img, gt):
             t = 1
         else:
             print("WRONG IMAGE")
+    gaussed_image = cv2.resize(gaussed_image, (44, 32))
     return gaussed_image
 
 def add_padded_box(heat_img, gt):
@@ -157,9 +159,8 @@ def add_padded_box(heat_img, gt):
             print("WRONG IMAGE")
     #cv2.imshow('image5', gaussed_image)
     #cv2.waitKey()
+    gaussed_image = cv2.resize(gaussed_image, (44, 32))
     return gaussed_image
-
-
 
 
 def get_heatmap(label, heat_img):
@@ -179,7 +180,6 @@ def get_heatmap(label, heat_img):
     #heatmap = add_gaussian(heat_img, gt)
     #heatmap = add_gaussian_3D(heat_img, gt)
     heatmap = add_padded_box(heat_img, gt)
-    heatmap = cv2.resize(heatmap, (88, 64))
     #cv2.imshow('image', heatmap)
     #cv2.waitKey(0)
     return heatmap
@@ -225,11 +225,37 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
         print('Doesnt have a corresponding json entry')
         return
     heatmap = get_heatmap(jsonData['frames'][jidx], pngData)
+    bbox = np.zeros(shape=[6, 5], dtype=float)
     numPassengers = 0
     for j in range(0,len(jsonData['frames'][jidx]['annotations'])):
         if(jsonData['frames'][jidx]['annotations'][j]['label'] == 'Head'):
             if jsonData['frames'][jidx]['annotations'][j]['width'] != 0 and jsonData['frames'][jidx]['annotations'][j]['height'] != 0:
+                #print(jsonData['frames'][jidx]['annotations'][j])
                 numPassengers += 1
+                bbox[numPassengers][0] = 1
+                bbox[numPassengers][1] = jsonData['frames'][jidx]['annotations'][j]['x']/640
+                bbox[numPassengers][2] = jsonData['frames'][jidx]['annotations'][j]['y']/480
+                bbox[numPassengers][3] = (jsonData['frames'][jidx]['annotations'][j]['x']+jsonData['frames'][jidx]['annotations'][j]['width'])/640
+                if bbox[numPassengers][3] > 1:
+                    print('xmax', bbox[numPassengers][3], filenames[i])
+                    bbox[numPassengers][3]=1
+                bbox[numPassengers][4] = (jsonData['frames'][jidx]['annotations'][j]['y']+jsonData['frames'][jidx]['annotations'][j]['height'])/480
+                if bbox[numPassengers][4] > 1:
+                    print('ymax', bbox[numPassengers][4], filenames[i])
+                    bbox[numPassengers][4]=1
+                #print(jsonData['frames'][jidx]['annotations'][j]['x'])
+                #print(jsonData['frames'][jidx]['annotations'][j]['y'])
+                #print(jsonData['frames'][jidx]['annotations'][j]['width'])
+                #print(jsonData['frames'][jidx]['annotations'][j]['height'])
+                #print(bbox[numPassengers][1])
+                #print(bbox[numPassengers][2])
+                #print(bbox[numPassengers][3])
+                #print(bbox[numPassengers][4])
+                assert (bbox[numPassengers][1]>=0 and bbox[numPassengers][1]<=1)
+                assert (bbox[numPassengers][2]>=0 and bbox[numPassengers][2]<=1)
+                assert (bbox[numPassengers][3]>=0 and bbox[numPassengers][3]<=1)
+                assert (bbox[numPassengers][4]>=0 and bbox[numPassengers][4]<=1)
+                #bbox[numPassengers][10][7] = 0
     if numPassengers==0:
         numPassLabel = np.array([1, 0, 0, 0, 0, 0], dtype=np.float32)
     elif numPassengers==1:
@@ -250,19 +276,23 @@ def write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, i)
     global listFlname
     global listNumPassLabel
     global list_heatmap
+    global list_bbox
 
     listData.append(np.reshape(data, -1))
     listFlname.append(filenames[i])
     listNumPassLabel.append(numPassLabel)
     list_heatmap.append(np.reshape(heatmap, -1))
+    list_bbox.append(np.reshape(bbox,-1))
 
     if (len(listData) == samplesinshard) or (i == len(filenames)-1):
-        tfrecord_io.write_tfrec_heatmap(listData, listFlname, listNumPassLabel, list_heatmap, writeFolder, str(shardNumber))
+        tfrecord_io.write_tfrec_heatmap_6b5(listData, listFlname, listNumPassLabel, list_heatmap, list_bbox, writeFolder, str(shardNumber))
         shardNumber+=1
+        print(writeFolder)
         listData.clear()
         listFlname.clear()
         listNumPassLabel.clear()
         list_heatmap.clear()
+        list_bbox.clear()
         print('Progress = ', 100*i/len(filenames), '%  -  Writing to shard ', shardNumber)
     return
 
@@ -283,6 +313,7 @@ def create_tfrecords(pngFolder, filenames, writeFolder):
 
     #startTime = time.time()
     print('Progress = 0 %')
+    filenames = filenames[:1000]
     for j in range(len(filenames)):
         write_tfrecord(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j)
     #Parallel(n_jobs=num_cores)(delayed(write_tfrecord)(pngFolder, filenames, jsonData, jsonFileName, writeFolder, j) for j in range(0,len(filenames)))
@@ -297,7 +328,7 @@ def _set_folder(folderPath):
         os.makedirs(folderPath)
 
 def main(_):
-    id_fold = '1'
+    id_fold = '2'
     print('Argument List:', str(sys.argv))
     sys.argv.append('../Data/cold_wb')
     trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train'+id_fold+'.json')
@@ -306,11 +337,9 @@ def main(_):
     testFilenames = _read_json_file(sys.argv[1]+'/filenames_test'+id_fold+'.json')
 
     print("Writing train records...")
-    print(sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
     _set_folder(sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
     create_tfrecords(sys.argv[1] + "/trainpngfoldK"+id_fold, trainFilenames, sys.argv[1]+"/train_tfrecs_rg0_deconv_f"+id_fold)
     print("Writing test records...")
-    print(sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
     _set_folder(sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
     create_tfrecords(sys.argv[1] + "/testpngfoldK"+id_fold, testFilenames, sys.argv[1]+"/test_tfrecs_rg0_deconv_f"+id_fold)
 

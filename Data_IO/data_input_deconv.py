@@ -207,9 +207,14 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
         sampleData = []
         for _ in range(numPreprocessThreads):
             # Parse a serialized Example proto to extract the image and metadata.
+            #filename, pngTemp, target_clsf, target_deconv, bbox = tfrecord_io.parse_example_heatmap_6b5(exampleSerialized, **kwargs)
+            #sampleData.append([filename, pngTemp, target_clsf, target_deconv, bbox])
             filename, pngTemp, target_clsf, target_deconv = tfrecord_io.parse_example_heatmap(exampleSerialized, **kwargs)
             sampleData.append([filename, pngTemp, target_clsf, target_deconv])
             
+        #batchFilename, batchPngTemp, batchTarget_clsf, batchTarget_deconv, batch_bbox = tf.train.batch_join(sampleData,
+        #                                                            batch_size=kwargs.get('activeBatchSize'),
+        #                                                            capacity=2*numPreprocessThreads*kwargs.get('activeBatchSize'))
         batchFilename, batchPngTemp, batchTarget_clsf, batchTarget_deconv = tf.train.batch_join(sampleData,
                                                                     batch_size=kwargs.get('activeBatchSize'),
                                                                     capacity=2*numPreprocessThreads*kwargs.get('activeBatchSize'))
@@ -221,9 +226,9 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
         # Display the training images in the visualizer.
         batchTarget_deconv = batch_image_preprocessing(batchTarget_deconv, **kwargs)
         # add heatmap to the summary
-        #tf.summary.image('outImg', tf.split(batchTarget_deconv, 1, 3)[0])
-        for hmaps in range(kwargs['num_heatmap']):
-            tf.summary.image('outImg', tf.split(batchTarget_deconv, 6, 3)[hmaps])
+        tf.summary.image('inImg', batchTarget_deconv)
+        #for hmaps in range(kwargs['num_heatmap']):
+        #    tf.summary.image('inImg', tf.split(batchTarget_deconv, kwargs['num_heatmap'], 3)[hmaps])
         # add thermal image to summary
         #for i in range(kwargs.get('pngChannels')):
         #    if kwargs.get('pngChannels') == 2:
@@ -235,6 +240,7 @@ def fetch_inputs(readDir, numPreprocessThreads=None, numReaders=1, **kwargs):
         #        print('CHECK THE INPUT CHANNELS --- INPUT IS NOT 1c, 2c, nor 3c!!!')
         
         #batchPngTemp = image_preprocessing(batchPngTemp, **kwargs)
+        #return {'filename': batchFilename, 'image': batchPngTemp, 'clsf': batchTarget_clsf, 'deconv': batchTarget_deconv, 'bbox':batch_bbox}
         return {'filename': batchFilename, 'image': batchPngTemp, 'clsf': batchTarget_clsf, 'deconv': batchTarget_deconv}
 
 def inputs(**kwargs):

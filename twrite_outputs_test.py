@@ -185,7 +185,7 @@ def train(modelParams, epochNumber):
         print('Ex-Model     loaded')
 
 
-        if False:
+        if True:
             # if True: freeze graph
             tf.train.write_graph(sess.graph.as_graph_def(), '.' , modelParams['trainLogDir']+'_v/model.pbtxt', as_text=True)
             # Output nodes

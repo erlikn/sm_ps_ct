@@ -112,15 +112,15 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     # DECONVOLUTION
     ###################################################
     ###################################################
-    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv1', fireOut4, prevExpandDim4, {'deConv3x3': modelShape[3]}, wd=None, stride=(2,2), padding='SAME', **kwargs)
+    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv1', fireOut4, prevExpandDim4, {'deConv1x1': int(modelShape[3]/2)}, wd=None, stride=(2,2), padding='SAME', **kwargs)
     print(fireMap.get_shape(), prevExpandDim)
-    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv2', fireMap, prevExpandDim, {'deConv3x3': kwargs['num_heatmap']}, wd=None, stride=(2,2), padding='SAME', **kwargs)
+    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv2', fireMap, prevExpandDim, {'deConv3x3': int(modelShape[3]/4)}, wd=None, stride=(2,2), padding='SAME', **kwargs)
     print(fireMap.get_shape(), prevExpandDim)
+    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv3', fireMap, prevExpandDim, {'deConv3x3': kwargs['num_heatmap']}, wd=None, stride=(2,2), padding='SAME', **kwargs)
+    print(fireMap.get_shape(), prevExpandDim)
+    #fireMap = tf.constant(0)
 
-#    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6+l2reg7)/7
-    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg7)/6
-#    l2reg = (l2reg1+l2reg2+l2reg3+l2reg5+l2reg6)/5
-#    l2reg = (l2reg1+l2reg2+l2reg5+l2reg6)/4
+    l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6+l2reg7)/7
 
     output = {'clsf': fireOut1, 'deconv': fireMap, 'l2reg': l2reg}
     return output
@@ -150,8 +150,8 @@ def loss_l2reg(pred, target, **kwargs): # batchSize=Sne
     clsf_loss_name = kwargs['lossFunction']
     loss_clsf = model_base.loss_l2reg(pred['clsf'], target['clsf'], pred['l2reg'], **kwargs)
     kwargs['lossFunction'] = 'deconv'
+    #loss_deconv = tf.multiply(model_base.loss_l2reg(pred['deconv'], target['deconv'], 0, **kwargs), 1)#.1)
     loss_deconv = model_base.loss_l2reg(pred['deconv'], target['deconv'], 0, **kwargs)
-    kwargs['lossFunction'] = clsf_loss_name
     total_loss = tf.add(loss_clsf, loss_deconv, name='loss_total')
     return total_loss
 

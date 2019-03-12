@@ -1033,8 +1033,8 @@ def _181114rg0_deconv(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['dropOutKeepRate'] = 0.5
         data['optimizer'] = 'AdaGrad' # AdamOptimizer MomentumOptimizer GradientDescentOptimizer
         data['momentum'] = 0.9
-        data['initialLearningRate'] = 0.001#0.0005
-        data['learningRateDecayFactor'] = 0.5#0.1
+        data['initialLearningRate'] = 0.001#0.0005#0.001#0.0005
+        data['learningRateDecayFactor'] = 0.5#0.5#0.1
         data['epsilon'] = 0.1
         
         #data['modelShape'] = [0   1    2    3    4]
@@ -1045,9 +1045,9 @@ def _181114rg0_deconv(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['numTestDatasetExamples'] = 131
         data['logicalOutputSize'] = 6
         data['outputSize']=6
-        data['num_heatmap']=6
+        data['num_heatmap']=1
         data['networkOutputSize'] = data['logicalOutputSize']
-        data['lossFunction'] = "clsf_ohem_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg
+        data['lossFunction'] = "clsf_focal_l2reg"#"ohem_loss"#"_params_classification_softmaxCrossentropy_loss"#"focal_loss"#clsf_smce_l2reg#clsf_ohem_l2reg#clsf_focal_l2reg
         
         ######## No resizing - images are resized after parsing inside data_input.py
         data['pngRows'] = 256
@@ -1064,8 +1064,8 @@ def _181114rg0_deconv(reCompile, trainLogDirBase, testLogDirBase, runName, data)
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_deconv_f2/'
-        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_deconv_f2/'
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_deconv_f1/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_deconv_f1/'
         print(data['trainDataDir'])
 
         data['trainOutputDir'] = data['trainLogDir']+'/target/'

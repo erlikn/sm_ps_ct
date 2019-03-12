@@ -1,7 +1,7 @@
 #!/bin/sh
-((i=9750))
+((i=2000))
 ((k=0))
-while [ $k -lt 9750 ]
+while [ $k -lt 20001 ]
 do
 	((k=i))
 	echo $k
