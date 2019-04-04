@@ -234,7 +234,7 @@ def train(modelParams, epochNumber):
             npfilename, npTargetT, npTargetP, npImageP = sess.run([input_data['filename'], input_data['clsf'], output_res['clsf'], output_res['deconv']])
             #print(modelParams['outputDir']+str(step+10000)+'.jpg')
             # 1-mask imwrite
-            #cv2.imwrite(modelParams['outputDir']+str(step+10000)+'.jpg', npImageP[0,:,:,0])
+            cv2.imwrite(modelParams['outputDir']+str(step+10000)+'.jpg', npImageP[0,:,:,0])
             # 6-mask imwrite
             #for hemaps in range(modelParams['num_heatmap']):
             #    cv2.imwrite(modelParams['outputDir']+str(step+10000)+'_'+str(hemaps)+'.jpg', npImageP[0,:,:,hemaps])

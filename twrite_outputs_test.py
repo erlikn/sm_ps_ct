@@ -89,7 +89,7 @@ def _set_control_params(modelParams):
     shutil.rmtree(modelParams['outputDir'])
     os.mkdir(modelParams['outputDir'])
     print('Target folder created : ', modelParams['outputDir'])
-    #
+    #twrite_outputs_test
     #for theFile in os.listdir(modelParams['outputDir']):
     #    filePath = os.path.join(modelParams['outputDir'], theFile)
     #    try:

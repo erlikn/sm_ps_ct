@@ -36,8 +36,9 @@ def main(argv=None):
 			resDict = json.load(data_file)
 	epochSteps = 1000
 	import Model_Settings.json_maker as json_maker
+	json_maker.recompile_json_files(modelName)
 	jsonToRead = modelName+'.json'
-	print("Reading %s" % jsonToRead)
+	print("Reading %s" % 'Model_Settings/'+jsonToRead)
 	with open('Model_Settings/'+jsonToRead) as data_file:
 		modelParams = json.load(data_file)
 	

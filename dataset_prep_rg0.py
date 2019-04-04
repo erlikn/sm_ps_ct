@@ -153,19 +153,19 @@ def _set_folder(folderPath):
         os.makedirs(folderPath)
 
 def main(_):
-    id_fold = '3'
+    id_fold = '4'
     print('Argument List:', str(sys.argv))
     trainFilenames = _read_json_file(sys.argv[1]+'/filenames_train'+id_fold+'.json')
     from random import shuffle
     shuffle(trainFilenames)
     testFilenames = _read_json_file(sys.argv[1]+'/filenames_test'+id_fold+'.json')
 
-    print("Writing train records...")
-    _set_folder(sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
-    create_tfrecords(sys.argv[1] + "/trainpngfoldK"+id_fold, trainFilenames, sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
-    #print("Writing test records...")
-    #_set_folder(sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
-    #create_tfrecords(sys.argv[1] + "/testpngfoldK"+id_fold, testFilenames, sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
+    #print("Writing train records...")
+    #_set_folder(sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
+    #create_tfrecords(sys.argv[1] + "/trainpngfoldK"+id_fold, trainFilenames, sys.argv[1]+"/train_tfrecs_rg0_f"+id_fold)
+    print("Writing test records...")
+    _set_folder(sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
+    create_tfrecords(sys.argv[1] + "/testpngfoldK"+id_fold, testFilenames, sys.argv[1]+"/test_tfrecs_rg0_f"+id_fold)
 
 
 if __name__ == '__main__':

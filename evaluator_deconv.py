@@ -57,7 +57,6 @@ def main(argv=None):
 		#		shutil.copy( modelParams['trainLogDir']+'/model.ckpt-'+str(evalStep)+'.meta', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.meta' )
 		#		break
 		#	time.sleep(30)
-
 		###### uncomment only for testing
 		fileCheckpoint = Path(modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep)+'.data-00000-of-00001')
 		print('Waiting for 	   ', modelParams['trainLogDir']+'_v/model.ckpt-'+str(evalStep))
@@ -65,7 +64,6 @@ def main(argv=None):
 			if fileCheckpoint.is_file():
 				break
 			time.sleep(10)
-		
 		argv[2] = evalStep
 		print("-------------------- EVALUATION STARTED -----------------")
 		print(argv)

@@ -23,6 +23,7 @@ def evaluate(resDict):
     c_p =0
     c_n =0
     counter = 0
+    confmatrix =np.zeros([10,10])
     for k in dictKeys:
         t = np.array(resDict[k]['targetT'])
         tidx = np.argmax(t)
@@ -35,6 +36,7 @@ def evaluate(resDict):
         else:
             neg1 += 1
             c_n += 1
+        confmatrix[tidx, pidx]+=1
         counter+=1
         if counter%1==0:
             #print(10000+int(counter/1)-1, 100*c_p/(c_p+c_n))
@@ -51,7 +53,7 @@ def evaluate(resDict):
     if not(c_p==0 or c_n==0): 
         print(10000+int(counter/1), 100*c_p/(c_p+c_n))
     print(counter)
-    return 100*pos1/(pos1+neg1)
+    return 100*pos1/(pos1+neg1), confmatrix
 
 def _get_resultDict(jsonPath):
     filenames = listdir(jsonPath)
@@ -80,7 +82,9 @@ def main(modelName, phase):
         return
     
     resultsDict = _get_resultDict(jsonPath)
-    acc = evaluate(resultsDict)
+    acc, confmatrix = evaluate(resultsDict)
+    print()
+    print(confmatrix)
     print('----------------- Phase : ', phase)
     print('----------------- Prediction result path : ', jsonPath)
     return acc

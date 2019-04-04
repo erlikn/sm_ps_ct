@@ -84,6 +84,7 @@ def parse_example_proto(exampleSerialized, **kwargs):
 
 def write_tfrecords_shard(pngDatalist, filenamelist, numPassLabellist, writeFolder, shardname):
     ######## No resizing - images are resized after parsing inside data_input.py
+    print(writeFolder+'/'+shardname+'.tfrecords')
     writer = tf.python_io.TFRecordWriter(writeFolder+'/'+shardname+'.tfrecords')
     for i in range(len(pngDatalist)):
         tf_example = tf.train.Example(features=tf.train.Features(feature={
@@ -112,8 +113,8 @@ def parse_example_heatmap(exampleSerialized, **kwargs):
         'temp_v': tf.FixedLenFeature([pngRows*pngCols*pngCnls], dtype=tf.float32),
         'filename': tf.FixedLenFeature([], dtype=tf.string),
         'label': tf.FixedLenFeature([labelSize], dtype=tf.float32),
-        #'heatmap': tf.FixedLenFeature([32*44*num_heatmaps], dtype=tf.float32)
-        'heatmap': tf.FixedLenFeature([64*88*num_heatmaps], dtype=tf.float32)
+        'heatmap': tf.FixedLenFeature([32*44*num_heatmaps], dtype=tf.float32)
+        #'heatmap': tf.FixedLenFeature([64*88*num_heatmaps], dtype=tf.float32)
         }
     features = tf.parse_single_example(exampleSerialized, featureMap)
     filename = features['filename']
@@ -122,12 +123,13 @@ def parse_example_heatmap(exampleSerialized, **kwargs):
                                 pngCols,
                                 pngCnls)
     target = features['label']
-    #heatmap = tf.reshape(features['heatmap'], [32, 44, num_heatmaps])
-    heatmap = tf.reshape(features['heatmap'], [64, 88, num_heatmaps])
+    heatmap = tf.reshape(features['heatmap'], [32, 44, num_heatmaps])
+    #heatmap = tf.reshape(features['heatmap'], [64, 88, num_heatmaps])
     return filename, pngTemp, target, heatmap
 
 def write_tfrec_heatmap(pngDatalist, filenamelist, numPassLabellist, heatmap_list, writeFolder, shardname):
     ######## No resizing - images are resized after parsing inside data_input.py
+    print(writeFolder+'/'+shardname+'.tfrecords')
     writer = tf.python_io.TFRecordWriter(writeFolder+'/'+shardname+'.tfrecords')
     for i in range(len(pngDatalist)):
         tf_example = tf.train.Example(features=tf.train.Features(feature={

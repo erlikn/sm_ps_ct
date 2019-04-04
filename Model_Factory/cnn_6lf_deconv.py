@@ -60,17 +60,17 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
                                                                   wd, stride=[1,2,2,1], **kwargs)
     #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool1')
     ############## CONV2
-    fireOut1, prevExpandDim, l2reg2 = model_base.conv_fire_module_l2regul('conv2', fireOut1, prevExpandDim,
+    fireOut2, prevExpandDim, l2reg2 = model_base.conv_fire_module_l2regul('conv2', fireOut1, prevExpandDim,
                                                                   {'cnn3x3': modelShape[1]},
                                                                   wd, stride=[1,2,2,1], **kwargs)
     #fireOut1 = tf.nn.max_pool(fireOut1, ksize=[1, 8, 8, 1], strides=[1, 8, 8, 1], padding='SAME', name='maxpool2')
     ############## CONV3
-    fireOut1, prevExpandDim, l2reg3 = model_base.conv_fire_module_l2regul('conv3', fireOut1, prevExpandDim,
+    fireOut3, prevExpandDim, l2reg3 = model_base.conv_fire_module_l2regul('conv3', fireOut2, prevExpandDim,
                                                                   {'cnn3x3': modelShape[2]},
                                                                   wd, stride=[1,4,4,1], **kwargs)
     #fireOut2 = tf.nn.max_pool(fireOut2, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME', name='maxpool3')
     ############## CONV4
-    fireOut4, prevExpandDim4, l2reg4 = model_base.conv_fire_module_l2regul('conv4', fireOut1, prevExpandDim,
+    fireOut4, prevExpandDim4, l2reg4 = model_base.conv_fire_module_l2regul('conv4', fireOut3, prevExpandDim,
                                                                   {'cnn3x3': modelShape[3]},
                                                                   wd, stride=[1,2,2,1], **kwargs)
     ###################################################
@@ -112,12 +112,25 @@ def inference_l2reg(images, **kwargs): #batchSize=None, phase='train', outLayer=
     # DECONVOLUTION
     ###################################################
     ###################################################
-    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv1', fireOut4, prevExpandDim4, {'deConv1x1': int(modelShape[3]/2)}, wd=None, stride=(2,2), padding='SAME', **kwargs)
-    print(fireMap.get_shape(), prevExpandDim)
+    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv1', fireOut4, prevExpandDim4, {'deConv3x3': int(modelShape[3]/2)}, wd=None, stride=(2,2), padding='SAME', **kwargs)
+    print('dec1', fireMap.get_shape(), prevExpandDim)
+    fireMap = tf.concat([fireOut3, fireMap], axis=3)
+    prevExpandDim = prevExpandDim+modelShape[2]
     fireMap, prevExpandDim = model_base.deconv_fire_module('deconv2', fireMap, prevExpandDim, {'deConv3x3': int(modelShape[3]/4)}, wd=None, stride=(2,2), padding='SAME', **kwargs)
-    print(fireMap.get_shape(), prevExpandDim)
-    fireMap, prevExpandDim = model_base.deconv_fire_module('deconv3', fireMap, prevExpandDim, {'deConv3x3': kwargs['num_heatmap']}, wd=None, stride=(2,2), padding='SAME', **kwargs)
-    print(fireMap.get_shape(), prevExpandDim)
+    print('dec2', fireMap.get_shape(), prevExpandDim)
+    #fireMap, prevExpandDim = model_base.deconv_fire_module('deconv3', fireMap, prevExpandDim, {'deConv3x3': int(modelShape[3]/4)}, wd=None, stride=(2,2), padding='SAME', **kwargs)
+    #print('dec3', fireMap.get_shape(), prevExpandDim)
+    #fireMap = tf.concat([fireOut2, fireMap], axis=3)
+    #prevExpandDim = prevExpandDim+modelShape[1]
+    #fireMap, prevExpandDim = model_base.deconv_fire_module('deconv3', fireMap, prevExpandDim, {'deConv1x1': kwargs['num_heatmap']}, wd=None, stride=(1,1), padding='SAME', **kwargs)
+    #print('dec4', fireMap.get_shape(), prevExpandDim)
+    fireMap, prevExpandDim, l2regdec = model_base.conv_fire_module_l2regul('convdec', fireMap, prevExpandDim,
+                                                                  {'cnn3x3': kwargs['num_heatmap']},
+                                                                  wd, stride=[1,1,1,1], **kwargs)
+    #fireMap, prevExpandDim, l2regdec = model_base.conv_fire_module_l2regul('convdec', fireMap, prevExpandDim,
+    #                                                              {'cnn7x7': kwargs['num_heatmap']},
+    #                                                              wd, stride=[1,1,1,1], **kwargs)
+    
     #fireMap = tf.constant(0)
 
     l2reg = (l2reg1+l2reg2+l2reg3+l2reg4+l2reg5+l2reg6+l2reg7)/7

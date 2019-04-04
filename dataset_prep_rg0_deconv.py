@@ -179,7 +179,7 @@ def get_heatmap(label, heat_img):
     #heatmap = add_gaussian(heat_img, gt)
     #heatmap = add_gaussian_3D(heat_img, gt)
     heatmap = add_padded_box(heat_img, gt)
-    heatmap = cv2.resize(heatmap, (88, 64))
+    heatmap = cv2.resize(heatmap, (44, 32))
     #cv2.imshow('image', heatmap)
     #cv2.waitKey(0)
     return heatmap

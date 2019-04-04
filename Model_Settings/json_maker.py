@@ -870,8 +870,8 @@ def _mobilenet_rg0(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f4/'
-        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f4/'
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f3/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f3/'
 
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
@@ -1015,8 +1015,8 @@ def _181114rg0_ohem(reCompile, trainLogDirBase, testLogDirBase, runName, data):
         data['trainLogDir'] = trainLogDirBase + runName
         data['testLogDir'] = testLogDirBase + runName
 
-        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f3/'
-        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f3/'
+        data['trainDataDir'] = '../Data/cold_wb/train_tfrecs_rg0_f4/'
+        data['testDataDir'] = '../Data/cold_wb/test_tfrecs_rg0_f4/'
 
         data['trainOutputDir'] = data['trainLogDir']+'/target/'
         data['testOutputDir'] = data['testLogDir']+'/target/'
